@@ -1,0 +1,1491 @@
+{
+  "configs": {
+    "TerrainAnalysisConfig": {
+      "visible": true,
+      "advanced": true,
+      "displayName": "Terrain Analysis",
+      "image": "images/terrain-analysis.png",
+      "order": 1,
+      "properties": {
+        "TerrainSamplesPerChunk": {
+          "inputType": "slider",
+          "min": 1,
+          "max": 15,
+          "step": 1,
+          "images": [
+            { "src": "images/Terrain Analysis/TerrainSamplesPerChunk-7.png", "description": "7 samples per chunk" },
+            { "src": "images/Terrain Analysis/TerrainSamplesPerChunk-12.png", "description": "12 samples per chunk" }
+          ]
+        },
+        "SmallChunkRoughnessThreshold": {
+          "inputType": "slider",
+          "min": 0,
+          "max": 10,
+          "step": 0.1,
+          "images": [
+            { "src": "images/Terrain Analysis/RMSE.png", "description": "How RMSE measures differences between points (our height samples) and a flat line (a plane since our samples are in 3d space)" }
+          ]
+        },
+        "LargeChunkRoughnessThreshold": {
+          "inputType": "slider",
+          "min": 0,
+          "max": 10,
+          "step": 0.1,
+          "images": [
+            { "src": "images/Terrain Analysis/RMSE.png", "description": "How RMSE measures differences between points (our height samples) and a flat line (a plane since our samples are in 3d space)" }
+          ]
+        }
+      }
+    },
+    "FlowSimulationConfig": {
+      "visible": true,
+      "advanced": true,
+      "displayName": "Flow Simulation",
+      "image": "images/flow-simulation.png",
+      "order": 2,
+      "properties": {
+        "PressureTowardsDrainRadiusInChunks": {
+          "inputType": "slider",
+          "min": 1,
+          "max": 10,
+          "step": 1,
+          "images": [
+            { "src": "images/Flow Simulation/beforeDrainPressureRadius2.png", "description": "Before drain pressure (radius 2)" },
+            { "src": "images/Flow Simulation/afterDrainPressureRadius2.png", "description": "After drain pressure (radius 2)" }
+          ]
+        },
+        "PeakAnglePressureTowardsDrain": {
+          "inputType": "slider",
+          "min": 0,
+          "max": 180,
+          "step": 1
+        },
+        "DrainChunkDetectionSensitivity": {
+          "inputType": "slider",
+          "min": -25,
+          "max": 25,
+          "step": 1
+        },
+        "DrainAreaRadius": {
+          "inputType": "slider",
+          "min": 0,
+          "max": 15,
+          "step": 1,
+          "images": [
+            { "src": "images/Flow Simulation/bigStreamSmallDrain.png", "description": "Checking the drains in an area helps to prevent cases like this, where the drain is too small for the stream." }
+          ]
+        },
+        "NumberOfDrainChunksWithinDrainAreaForStream": {
+          "inputType": "slider",
+          "min": 1,
+          "max": 150,
+          "step": 1
+        },
+        "FlowStageIterationsPerChunk": {
+          "inputType": "slider",
+          "min": 0,
+          "max": 20,
+          "step": 1,
+          "images": [
+            { "src": "images/Flow Simulation/terrain-slope-map.png", "description": "Step 1: Terrain slope map" },
+            { "src": "images/Flow Simulation/drain-pressured-slope-map.png", "description": "Step 2: Drain pressured slope map" },
+            { "src": "images/Flow Simulation/flow-map-iteration-1.png", "description": "Step 3: Flow map iteration 1" },
+            { "src": "images/Flow Simulation/flow-map-iteration-2.png", "description": "Step 4: Flow map iteration 2" },
+            { "src": "images/Flow Simulation/flow-map-iteration-3.png", "description": "Step 5: Flow map iteration 3" },
+            { "src": "images/Flow Simulation/flow-map-iteration-4.png", "description": "Step 6: Flow map iteration 4" },
+            { "src": "images/Flow Simulation/generatedTerrainForFlowmaps.png", "description": "Generated terrain for the flow maps" }
+          ]
+        },
+        "MinimumSlopeMagnitudeForDirectionalInflow": {
+          "inputType": "slider",
+          "min": 0,
+          "max": 50,
+          "step": 0.1,
+          "images": [
+            { "src": "images/Flow Simulation/lowMagnitudeSlopes.png", "description": "Low magnitude slopes on a flat plain" },
+            { "src": "images/Flow Simulation/highMagnitudeSlopes.png", "description": "High magnitude slopes on the side of a steep but smooth mountain" }
+          ]
+        }
+      }
+    },
+    "StreamGenerationConfig": {
+      "visible": true,
+      "displayName": "Stream Generation",
+      "image": "images/stream-generation.png",
+      "order": 3,
+      "properties": {
+        "MaxStreamLength": {
+          "inputType": "slider",
+          "min": 6,
+          "max": 30,
+          "step": 1,
+          "images": [
+            { "src": "images/Stream Generation/small_11_and_16.png", "description": "11 small chunk long stream above, 16 small chunk long stream below" },
+            { "src": "images/Stream Generation/large_16.png", "description": "16 large chunk long stream, twice as long as small scale" }
+          ]
+        },
+        "MinStreamLength": {
+          "inputType": "slider",
+          "min": 3,
+          "max": 15,
+          "step": 1
+        },
+        "StreamScalingAnchorLength": {
+          "inputType": "slider",
+          "min": 10,
+          "max": 50,
+          "step": 1
+        },
+        "Tributary": {
+          "properties": {
+            "MinimumLength": {
+              "inputType": "slider",
+              "min": 1,
+              "max": 20,
+              "step": 1,
+              "images": [
+                { "src": "images/Stream Generation/straightTributary.png", "description": "Straight tributary" },
+                { "src": "images/Stream Generation/meanderingTributary.png", "description": "Meandering tributary" }
+              ]
+            },
+            "MergeDownstreamOffset": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": -50,
+              "max": 50,
+              "step": 1,
+              "images": [
+                { "src": "images/Stream Generation/mergeDownStreamOffset.png", "description": "Tributary connection that is shifted downstream" }
+              ]
+            },
+            "MainStreamProximityThreshold": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 0,
+              "max": 25,
+              "step": 0.1
+            },
+            "EnableLookahead": { "advanced": true }
+          }
+        },
+        "StreamTerrainInfluenceRadius": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 1,
+          "max": 20,
+          "step": 1
+        },
+        "BendPool": {
+          "properties": {
+            "Enabled": {
+              "displayName": "Bend Pool Enabled",
+              "images": [
+                { "src": "images/Stream Generation/pooling.png", "description": "Deeper pools around the peaks of the curves" }
+              ]
+            },
+            "MaxDepthBoost": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": -5,
+              "max": 25,
+              "step": 0.1
+            },
+            "CurvatureThreshold": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 0,
+              "max": 2,
+              "step": 0.001
+            },
+            "SmoothingWindow": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 1,
+              "max": 100,
+              "step": 1
+            },
+            "LookAroundDistance": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 1,
+              "max": 100,
+              "step": 1
+            }
+          }
+        }
+      }
+    },
+    "StreamPathingConfig": {
+      "visible": true,
+      "advanced": true,
+      "displayName": "Stream Pathing",
+      "image": "images/stream-pathing.png",
+      "order": 4,
+      "properties": {
+        "PathingAwayFromDrainScalar": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 0,
+          "max": 50,
+          "step": 0.01,
+          "images": [
+            { "src": "images/Stream Pathing/pathingStreams.png", "description": "13 potential streams pathing (purple squares) from the drain upstream through the terrain with the strongest water flow paths. Waterflow vectors that didn't get pathed ontop of are hidden here." },
+            { "src": "images/Stream Pathing/finalPaths.png", "description": "The 5 filtered out stream paths, from 13 potential paths, that will become streams. Note that the leftmost stream truncated the adjacent weaker stream because it got too close." },
+            { "src": "images/Stream Pathing/finalStreams.png", "description": "The streams created from the stream paths" },
+            { "src": "images/Stream Pathing/noOverride.png", "description": "This is what it looks like when all potential streams are generated, and not filtered for the best ones." }
+          ]
+        },
+        "PathingLookaheadDepth": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 1,
+          "max": 25,
+          "step": 1
+        },
+        "PathingLookaheadBeamWidth": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 1,
+          "max": 50,
+          "step": 1
+        },
+        "StreamConflictChainDepth": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 1,
+          "max": 25,
+          "step": 1
+        }
+      }
+    },
+    "StreamMapConfig": {
+      "visible": true,
+      "advanced": true,
+      "displayName": "Stream Mapping",
+      "image": "images/stream-map.png",
+      "order": 5,
+      "properties": {
+        "MaxHeightRangeForNoiseFadeOut": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 0,
+          "max": 250,
+          "step": 1
+        },
+        "ConnectionPointNoiseFadeDistanceInBezierPoints": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 1,
+          "max": 1000,
+          "step": 1
+        },
+        "SmallStreamMapBlockColumnsPerPixel": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 1,
+          "max": 2,
+          "step": 1
+        },
+        "LargeStreamMapBlockColumnsPerPixel": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 1,
+          "max": 2,
+          "step": 1
+        },
+        "CurvePointSpacing": {
+          "advanced": true,
+          "order": 0,
+          "inputType": "slider",
+          "min": 1,
+          "max": 20,
+          "step": 0.1
+        },
+        "StreamShapeNoise": {
+          "properties": {
+            "NoiseScale": {
+              "inputType": "slider",
+              "min": 1,
+              "max": 500,
+              "step": 1,
+              "images": [
+                { "src": "images/Stream Mapping/straightStreamMap.png", "description": "This stream would be a smooth bezier curve without the stream shape noise wobbling it around." }
+              ]
+            },
+            "NoiseOctaves": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 1,
+              "max": 16,
+              "step": 1
+            },
+            "NoisePersistence": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 0,
+              "max": 10,
+              "step": 0.01
+            },
+            "NoiseLacunarity": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 0,
+              "max": 10,
+              "step": 0.01
+            },
+            "NoiseDisplacement": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 0,
+              "max": 2000,
+              "step": 1
+            },
+            "HeightRangeScalarPower": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 0,
+              "max": 10,
+              "step": 0.1
+            },
+            "StreamLengthScalarPower": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 0,
+              "max": 10,
+              "step": 0.1
+            }
+          }
+        },
+        "DrainFade": {
+          "properties": {
+            "DrainFadeOffset": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 0,
+              "max": 1000,
+              "step": 1,
+              "images": [
+                { "src": "images/Stream Mapping/drainFade.png", "description": "This black gradient circle fades out the stream's bulbous end, so the stream connection to the water is smooth and not jarring." }
+              ]
+            },
+            "DrainFadeRadius": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 0,
+              "max": 1000,
+              "step": 1
+            }
+          }
+        }
+      }
+    },
+    "StreamNoiseConfig": {
+      "visible": true,
+      "advanced": true,
+      "displayName": "Stream Noise",
+      "image": "images/stream-noise.png",
+      "order": 6,
+      "properties": {
+        "MoundSuppression": {
+          "properties": {
+            "Enabled": {
+              "displayName": "Mound Suppression Enabled",
+              "images": [
+                { "src": "images/Stream Noise/canyon.png", "description": "Fortunate or unfortunate side effect of suppressing noise like this. Overall it makes stream depth more consistent, but canyons look good in some areas and lame in others." }
+              ]
+            },
+            "Strength": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 0,
+              "max": 50,
+              "step": 0.01
+            }
+          }
+        },
+        "LandformCarving": {
+          "properties": {
+            "Enabled": { "displayName": "Landform Carving Enabled" },
+            "Strength": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 0,
+              "max": 50,
+              "step": 0.001
+            },
+            "Power": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 0,
+              "max": 10,
+              "step": 0.1
+            },
+            "UseExponential": { "advanced": true }
+          }
+        },
+        "StreamTerrainInfluenceAtAnchor": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 0,
+          "max": 1,
+          "step": 0.01
+        },
+        "StreamTerrainInfluenceAtSource": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 0,
+          "max": 1,
+          "step": 0.01
+        },
+        "StreambankHeightVariation": {
+          "properties": {
+            "Enabled": { "displayName": "Streambank Height Variation Enabled" },
+            "FactorsAtSource": { "advanced": true },
+            "FactorsAtMouth": {
+              "advanced": true,
+              "images": [
+                { "src": "images/Stream Noise/noisystream.png", "description": "If you crank the noise way up, you can get something like this on the banks. <br>The noise is now bound to the banks, not the valley like this old pic. <br>Theres definitely a lot of potential for unique streams by editing these bank noise configs." }
+              ]
+            },
+            "MaxVariation": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 0,
+              "max": 10,
+              "step": 0.01
+            }
+          }
+        },
+        "StreamWidthInterpolationPower": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 0,
+          "max": 10,
+          "step": 0.1
+        },
+        "CanyonRockiness": {
+          "properties": {
+            "Enabled": { "displayName": "Canyon Wall Rockiness Enabled" },
+            "FactorsAtSource": { "advanced": true },
+            "FactorsAtMouth": { "advanced": true },
+            "MaxRockiness": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 0,
+              "max": 10,
+              "step": 0.01
+            }
+          }
+        },
+        "StreambedSmoothing": {
+          "properties": {
+            "Enabled": { "displayName": "Streambed Smoothing Enabled" },
+            "LookaheadDistance": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 1,
+              "max": 200,
+              "step": 1
+            },
+            "SlopeDepthScaling": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 0,
+              "max": 25,
+              "step": 0.1
+            }
+          }
+        },
+        "SeaLevelFade": {
+          "properties": {
+            "SeaLevelFadeStartOffset": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": -5,
+              "max": 50,
+              "step": 1,
+              "images": [
+                { "src": "images/Stream Noise/streamMouth.png", "description": "This is really tricky to get right. You gotta aim for the highest percentage of passable stream mouths, not perfection." }
+              ]
+            },
+            "SeaLevelFadeEndOffset": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": -5,
+              "max": 50,
+              "step": 1
+            }
+          }
+        }
+      }
+    },
+    "MeanderingConfig": {
+      "visible": true,
+      "displayName": "Meandering Streams",
+      "image": "images/meandering.png",
+      "order": 7,
+      "properties": {
+        "EnabledChance": {
+          "inputType": "slider",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "images": [
+            "images/MeanderingAndBraiding/meanderingStream.png",
+            "images/MeanderingAndBraiding/meanderingStreams.png"
+          ]
+        },
+        "SinuosityAtSource": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 0,
+          "max": 5,
+          "step": 0.01
+        },
+        "SinuosityAtAnchor": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 0,
+          "max": 5,
+          "step": 0.01
+        },
+        "SinuosityScalingPower": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 0,
+          "max": 10,
+          "step": 0.1
+        },
+        "WavelengthMultiplierAtSource": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 0,
+          "max": 25,
+          "step": 0.01
+        },
+        "WavelengthMultiplierAtAnchor": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 0,
+          "max": 25,
+          "step": 0.01
+        },
+        "WavelengthScalingPower": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 0,
+          "max": 10,
+          "step": 0.1
+        },
+        "UseConstantBeltWidthRatio": { "advanced": true },
+        "BeltWidthToStreamWidthRatio": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 0.1,
+          "max": 25,
+          "step": 0.1
+        },
+        "MeanderIterations": {
+          "inputType": "slider",
+          "min": 1,
+          "max": 30,
+          "step": 1,
+          "advanced": true
+        },
+        "MeanderFading": {
+          "properties": {
+            "SourceDistanceAtAnchor": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 1,
+              "max": 1000,
+              "step": 1
+            },
+            "SourceExponent": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 0.1,
+              "max": 10,
+              "step": 0.1
+            },
+            "MouthDistanceAtAnchor": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 1,
+              "max": 1000,
+              "step": 1
+            },
+            "MouthExponent": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 0.1,
+              "max": 10,
+              "step": 0.1
+            }
+          }
+        },
+        "CurvePointSmoothing": {
+          "properties": {
+            "WindowRadius": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 1,
+              "max": 50,
+              "step": 1
+            },
+            "Strength": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 0,
+              "max": 5,
+              "step": 0.01
+            }
+          }
+        },
+        "SteepTerrainStraightening": {
+          "properties": {
+            "BlendStrength": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 0.1,
+              "max": 20,
+              "step": 0.01,
+              "images": [
+                { "src": "images/MeanderingAndBraiding/straightenedOnSlope.png", "description": "Notice that the stream meanders+braids on the flat and smooth terrain, and straightens up on the steep mountain slope." }
+              ]
+            },
+            "HeightThreshold": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 1,
+              "max": 500,
+              "step": 1
+            },
+            "BlendPower": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 0.1,
+              "max": 10,
+              "step": 0.1
+            },
+            "SearchRadius": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 1,
+              "max": 5,
+              "step": 1
+            }
+          }
+        },
+        "OxbowCutoff": {
+          "properties": {
+            "ProximityThreshold": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 0.1,
+              "max": 15,
+              "step": 0.01
+            },
+            "MinWavelengthArcLengthFraction": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 0,
+              "max": 1,
+              "step": 0.01,
+              "images": [
+                { "src": "images/MeanderingAndBraiding/failedOxbowCutoff.png", "description": "This oxbow is well overdue for a cutoff, maybe the \"Min Wavelength Arc Length Fraction\" is too high." }
+              ]
+            },
+            "MaxCutAttempts": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 1,
+              "max": 1000,
+              "step": 1
+            }
+          }
+        },
+        "CurvatureDisplacementMultipiler": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 0,
+          "max": 10,
+          "step": 0.01
+        }
+      }
+    },
+    "BraidedConfig": {
+      "visible": true,
+      "displayName": "Braided Streams",
+      "image": "images/meandering.png",
+      "order": 8,
+      "properties": {
+        "EnabledChance": {
+          "inputType": "slider",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "images": [
+            { "src": "images/MeanderingAndBraiding/currentBraiding.png", "description": "Braiding as it is with default settings. More consistent but less distinct from other stream types." },
+            { "src": "images/MeanderingAndBraiding/aggressiveBraiding.png", "description": "An older braided stream with more aggressive+volatile meandering and braiding settings, but has a more distinct appearance than the current braided streams." }
+          ]
+        },
+        "MinSmallScaleStreamLength": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 1,
+          "max": 30,
+          "step": 1
+        },
+        "MinLargeScaleStreamLength": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 1,
+          "max": 30,
+          "step": 1
+        },
+        "HistoricalIterations": {
+          "inputType": "slider",
+          "min": 1,
+          "max": 10,
+          "step": 1,
+          "advanced": true
+        },
+        "MinOpacity": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 0,
+          "max": 1,
+          "step": 0.01
+        },
+        "MaxOpacity": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 0,
+          "max": 1,
+          "step": 0.01
+        },
+        "CaptureGap": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 0,
+          "max": 10,
+          "step": 1
+        },
+        "MeanderIterations": {
+          "inputType": "slider",
+          "min": 1,
+          "max": 30,
+          "step": 1,
+          "advanced": true
+        },
+        "SinuosityAtSource": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 0,
+          "max": 5,
+          "step": 0.01
+        },
+        "SinuosityAtAnchor": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 0,
+          "max": 5,
+          "step": 0.01
+        },
+        "SinuosityScalingPower": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 0,
+          "max": 10,
+          "step": 0.1
+        },
+        "WavelengthMultiplierAtSource": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 0,
+          "max": 25,
+          "step": 0.01
+        },
+        "WavelengthMultiplierAtAnchor": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 0,
+          "max": 25,
+          "step": 0.01
+        },
+        "WavelengthScalingPower": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 0,
+          "max": 10,
+          "step": 0.1
+        },
+        "UseConstantBeltWidthRatio": { "advanced": true },
+        "BeltWidthToStreamWidthRatio": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 0.1,
+          "max": 25,
+          "step": 0.1
+        },
+        "CurvatureDisplacementMultipiler": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 0,
+          "max": 10,
+          "step": 0.01
+        },
+        "MeanderFading": {
+          "properties": {
+            "SourceDistanceAtAnchor": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 1,
+              "max": 1000,
+              "step": 1
+            },
+            "SourceExponent": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 0.1,
+              "max": 10,
+              "step": 0.1
+            },
+            "MouthDistanceAtAnchor": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 1,
+              "max": 1000,
+              "step": 1
+            },
+            "MouthExponent": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 0.1,
+              "max": 10,
+              "step": 0.1
+            }
+          }
+        },
+        "CurvePointSmoothing": {
+          "properties": {
+            "WindowRadius": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 1,
+              "max": 50,
+              "step": 1
+            },
+            "Strength": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 0,
+              "max": 5,
+              "step": 0.01
+            }
+          }
+        },
+        "SteepTerrainStraightening": {
+          "properties": {
+            "BlendStrength": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 0.1,
+              "max": 20,
+              "step": 0.01,
+              "images": [
+                { "src": "images/MeanderingAndBraiding/straightenedOnSlope.png", "description": "Notice that the stream meanders+braids on the flat and smooth terrain, and straightens up on the steep mountain slope." }
+              ]
+            },
+            "HeightThreshold": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 1,
+              "max": 500,
+              "step": 1
+            },
+            "BlendPower": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 0.1,
+              "max": 10,
+              "step": 0.1
+            },
+            "SearchRadius": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 1,
+              "max": 5,
+              "step": 1
+            }
+          }
+        },
+        "OxbowCutoff": {
+          "properties": {
+            "ProximityThreshold": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 0.1,
+              "max": 15,
+              "step": 0.01
+            },
+            "MinWavelengthArcLengthFraction": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 0,
+              "max": 1,
+              "step": 0.01,
+              "images": [
+                { "src": "images/MeanderingAndBraiding/failedOxbowCutoff.png", "description": "This oxbow is well overdue for a cutoff, maybe the \"Min Wavelength Arc Length Fraction\" is too high." }
+              ]
+            },
+            "MaxCutAttempts": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 1,
+              "max": 1000,
+              "step": 1
+            }
+          }
+        }
+      }
+    },
+    "StreamDimensionsConfig": {
+      "visible": true,
+      "displayName": "Stream Dimensions",
+      "image": "images/stream-dimensions.png",
+      "order": 9,
+      "properties": {
+        "StreamBedWidthAtAnchor": {
+          "inputType": "slider",
+          "min": 5,
+          "max": 50,
+          "step": 1
+        },
+        "StreamBankWidthAtAnchor": {
+          "inputType": "slider",
+          "min": 10,
+          "max": 100,
+          "step": 1
+        },
+        "StreamValleyWidthAtAnchor": {
+          "inputType": "slider",
+          "min": 50,
+          "max": 300,
+          "step": 5
+        },
+        "BedLowestDepth": {
+          "inputType": "slider",
+          "min": 3,
+          "max": 25,
+          "step": 1
+        },
+        "MinimumBedWidth": {
+          "inputType": "slider",
+          "min": 1,
+          "max": 250,
+          "step": 0.1
+        },
+        "MinimumBankWidth": {
+          "inputType": "slider",
+          "min": 1,
+          "max": 500,
+          "step": 0.1
+        },
+        "BankLowestDepth": {
+          "inputType": "slider",
+          "min": -30,
+          "max": 30,
+          "step": 1
+        },
+        "ValleyLowestDepth": {
+          "inputType": "slider",
+          "min": -60,
+          "max": 60,
+          "step": 1
+        },
+        "Tributary": {
+          "properties": {
+            "BedWidthAtAnchor": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 1,
+              "max": 500,
+              "step": 0.1
+            },
+            "BankWidthAtAnchor": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 1,
+              "max": 750,
+              "step": 0.1
+            },
+            "ValleyWidthAtAnchor": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 1,
+              "max": 1000,
+              "step": 1
+            },
+            "MinimumBedWidth": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 1,
+              "max": 250,
+              "step": 0.1
+            },
+            "MinimumBankWidth": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 1,
+              "max": 500,
+              "step": 0.1
+            },
+            "BedAlphaMultiplier": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 0,
+              "max": 1,
+              "step": 0.01
+            }
+          }
+        }
+      }
+    },
+    "StreamWaterConfig": {
+      "visible": true,
+      "displayName": "Stream Water",
+      "image": "images/stream-water.png",
+      "order": 10,
+      "properties": {
+        "WaterBelowStreamBed": {
+          "inputType": "slider",
+          "min": 1,
+          "max": 15,
+          "step": 1
+        },
+        "WaterAboveStreamBedMaximum": {
+          "inputType": "slider",
+          "min": 1,
+          "max": 15,
+          "step": 1
+        },
+        "PercentOfStreamBedAsCoreArea": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 0,
+          "max": 1,
+          "step": 0.01
+        },
+        "StreamBedWaterPlacementThreshold": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 0,
+          "max": 1,
+          "step": 0.01
+        },
+        "StreamBedBlockPlacementThreshold": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 0,
+          "max": 1,
+          "step": 0.01
+        },
+        "WaterForwardOffset": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 0,
+          "max": 20,
+          "step": 1
+        },
+        "UpstreamBankHeightSampling": {
+          "properties": {
+            "Enabled": { "advanced": true },
+            "SampleIntervalBlocks": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 1,
+              "max": 25,
+              "step": 1
+            },
+            "TotalDistanceBlocks": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 1,
+              "max": 2000,
+              "step": 1
+            }
+          }
+        },
+        "StreamWaterPush": {
+          "properties": {
+            "PushMagnitude": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 0,
+              "max": 0.1,
+              "step": 0.0001
+            },
+            "DownstreamSampleDistance": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 1,
+              "max": 50,
+              "step": 1
+            },
+            "UpstreamSampleDistance": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 1,
+              "max": 50,
+              "step": 1
+            },
+            "BankSpeedFactor": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 0,
+              "max": 1,
+              "step": 0.0001
+            }
+          }
+        }
+      }
+    },
+    "StreamBankDecorationConfig": {
+      "visible": true,
+      "displayName": "Streambank Decoration",
+      "image": "images/streambank-decoration.png",
+      "order": 11,
+      "compactNestedLayout": true,
+      "properties": {
+        "ForestMapBoostEnabled": {
+          "images": [
+            { "src": "images/Decoration/forestBoost.png", "description": "The trees around the stream are a result of boosting up the forest map opacity around the stream." }
+          ]
+        },
+        "CattailsConfig": {
+          "properties": {
+            "Enabled": {
+              "images": [
+                "images/Decoration/cattails.png"
+              ]
+            }
+          }
+        },
+        "PapyrusConfig": {
+          "properties": {
+            "Enabled": {
+              "images": [
+                "images/Decoration/papyrus.png"
+              ]
+            }
+          }
+        },
+        "TuleConfig": {
+          "properties": {
+            "Enabled": {
+              "images": [
+                "images/Decoration/tule.png"
+              ]
+            }
+          }
+        },
+        "DriftwoodConfig": {
+          "properties": {
+            "Enabled": {
+              "images": [
+                "images/Decoration/driftwood.png"
+              ]
+            }
+          }
+        },
+        "RottenLogConfig": {
+          "properties": {
+            "Enabled": {
+              "images": [
+                "images/Decoration/rottenlog.png"
+              ]
+            }
+          }
+        },
+        "BrownSedgeConfig": {
+          "properties": {
+            "Enabled": {
+              "images": [
+                "images/Decoration/sedge.png"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "StreamBedDecorationConfig": {
+      "visible": true,
+      "displayName": "Streambed Decoration",
+      "image": "images/streambed-decoration.png",
+      "order": 12,
+      "compactNestedLayout": true,
+      "properties": {
+        "BouldersConfig": {
+          "properties": {
+            "Enabled": {
+              "images": [
+                "images/Decoration/boulder.png"
+              ]
+            }
+          }
+        },
+        "StreamBedClay": {
+          "properties": {
+            "Enabled": {
+              "images": [
+                "images/Decoration/clay.png"
+              ]
+            }
+          }
+        },
+        "WaterCrowfootConfig": {
+          "properties": {
+            "Enabled": {
+              "images": [
+                "images/Decoration/crowfoot.png"
+              ]
+            }
+          }
+        },
+        "NorthernMilfoilConfig": {
+          "properties": {
+            "Enabled": {
+              "images": [
+                "images/Decoration/northernmilfoil.png"
+              ]
+            }
+          }
+        },
+        "HornwortConfig": {
+          "properties": {
+            "Enabled": {
+              "images": [
+                "images/Decoration/hornwort.png"
+              ]
+            }
+          }
+        },
+        "FeatherMilfoilConfig": {
+          "properties": {
+            "Enabled": {
+              "images": [
+                "images/Decoration/feathermilfoil.png"
+              ]
+            }
+          }
+        },
+        "SpikedMilfoilConfig": {
+          "properties": {
+            "Enabled": {
+              "images": [
+                "images/Decoration/spikedmilfoil.png"
+              ]
+            }
+          }
+        },
+        "MuskgrassConfig": {
+          "properties": {
+            "Enabled": {
+              "images": [
+                "images/Decoration/muskgrass.png"
+              ]
+            }
+          }
+        },
+        "StonesConfig": {
+          "properties": {
+            "Enabled": {
+              "images": [
+                "images/Decoration/stone.png"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "StreamSoundConfig": {
+      "visible": true,
+      "displayName": "Stream Sound",
+      "image": "images/stream-sound.png",
+      "order": 13,
+      "properties": {
+        "BaseVolume": {
+          "inputType": "slider",
+          "min": 0,
+          "max": 1,
+          "step": 0.05
+        },
+        "MaxVolume": {
+          "inputType": "slider",
+          "min": 0,
+          "max": 1,
+          "step": 0.01
+        },
+        "VolumeScaleWithWidth": {
+          "inputType": "slider",
+          "min": 0,
+          "max": 2,
+          "step": 0.05
+        },
+        "AmbientBlockCount": {
+          "inputType": "slider",
+          "min": 1,
+          "max": 200,
+          "step": 1
+        },
+        "LowPassFilterBase": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 0,
+          "max": 5,
+          "step": 0.01
+        },
+        "LowPassFilterWidthScale": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 0,
+          "max": 5,
+          "step": 0.01
+        },
+        "LowPassFilterMinimum": {
+          "advanced": true,
+          "inputType": "slider",
+          "min": 0,
+          "max": 5,
+          "step": 0.01
+        },
+        "EnableFrequencyFiltering": { "advanced": true }
+      }
+    },
+    "PerformanceAndDebugConfig": {
+      "visible": true,
+      "displayName": "Performance",
+      "image": "images/performance.png",
+      "order": 14,
+      "properties": {
+        "WatershedPrefetchRadius": {
+          "inputType": "slider",
+          "min": 1,
+          "max": 10,
+          "step": 1
+        }
+      }
+    },
+    "ExtraFeaturesConfig": {
+      "visible": true,
+      "displayName": "Extra Features",
+      "image": "images/extra-features.png",
+      "order": 15,
+      "properties": {
+        "CoastalTerrain": {
+          "properties": {
+            "Enabled": {
+              "displayName": "Coastal Terrain Enabled",
+              "images": [
+                { "src": "images/Extra Features/coastalSlope.png", "description": "The coastal terrain erosion's slope creates good terrain for streams to path upwards. Basegame terrain is quite flat over long distances, which rarely creates good slopes for long streams." },
+                "images/Extra Features/coastalSlope2.png"
+              ]
+            },
+            "BlurRadius": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 1,
+              "max": 150,
+              "step": 1
+            },
+            "CoastlinePercentile": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 0,
+              "max": 1,
+              "step": 0.01
+            },
+            "InlandLiftPercentile": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 0,
+              "max": 1,
+              "step": 0.01
+            },
+            "InlandMaxRaising": {
+              "inputType": "slider",
+              "min": 0,
+              "max": 100,
+              "step": 1
+            },
+            "CoastalMaxLowering": {
+              "inputType": "slider",
+              "min": 0,
+              "max": 100,
+              "step": 1,
+              "images": [
+                { "src": "images/Extra Features/mangroveForest.png", "description": "Mangrove forest created on shallows dug out by the coastal terrain lowering." }
+              ]
+            },
+            "SandThreshold": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 0,
+              "max": 1,
+              "step": 0.01
+            }
+          }
+        },
+        "Groundwater": {
+          "properties": {
+            "MaxDepth": {
+              "inputType": "slider",
+              "min": 0,
+              "max": 100,
+              "step": 1
+            },
+            "ConnectivityRadius": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 1,
+              "max": 25,
+              "step": 1
+            },
+            "ConnectivityThreshold": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 1,
+              "max": 150,
+              "step": 1
+            },
+            "DripTimeSeconds": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 1,
+              "max": 3600,
+              "step": 1
+            },
+            "SeepIntervalSeconds": {
+              "advanced": true,
+              "inputType": "slider",
+              "min": 1,
+              "max": 60,
+              "step": 1
+            }
+          }
+        },
+        "StreamFishSpawn": {
+          "properties": {
+            "Enabled": {
+              "images": [
+                "images/Extra Features/fish.png"
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}
