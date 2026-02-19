@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-18T17:00:24.4728729Z",
+  "generatedAt": "2026-02-19T02:40:15.9475072Z",
   "configs": [
     {
       "fileName": "TerrainAnalysisConfig.json",
@@ -60,7 +60,7 @@
           "jsonPropertyName": "DrainChunkDetectionSensitivity",
           "type": "int",
           "defaultValue": 1,
-          "description": "How many blocks a chunk\u0027s average sample height can be below sea level (or above if negative) to consider the chunk a possible drain for a stream.\u003Cbr\u003EHigher values mean less drain chunks, so streams only start in deeper water, but streams will start further into a basin which can look terrible.\u003Cbr\u003E.Lower or negative values mean more drain chunks, so streams will start closer to shore, but rivers could also drain to shallows or even into flat ground, which also looks terrible.\u003Cbr\u003EIf you adjust this, make sure you also adjust the stream mouth fade configs to match.",
+          "description": "How many blocks a chunk\u0027s average sample height can be below sea level (or above if negative) to consider the chunk a possible drain for a stream.\u003Cbr\u003EHigher values mean less drain chunks, so streams only start in deeper water, but streams will start further into a basin which can look terrible.\u003Cbr\u003ELower or negative values mean more drain chunks, so streams will start closer to shore, but rivers could also drain to shallows or even into flat ground, which also looks terrible.\u003Cbr\u003EIf you adjust this, make sure you also adjust the stream mouth fade configs to match.",
           "isNested": false
         },
         {
@@ -457,7 +457,7 @@
               "jsonPropertyName": "Enabled",
               "type": "bool",
               "defaultValue": true,
-              "description": "Enables suppression of terrain mounds/hills within stream areas.\u003Cbr\u003EThis is an asymmetrical noise reduction specifically set up to target small mounds that get in the way of rivers.\u003Cbr\u003EThe terrain sampling on the watershed model helps to avoid most rough terrain and bumps, but rarely some get through so we use this to carve through them.\u003Cbr\u003EIt carves canyons into the terrain a little bit, but its worth it to prevent streams from being split apart by a mound.",
+              "description": "Enables suppression of terrain mounds/hills within stream areas.\u003Cbr\u003EThis is an asymmetrical noise reduction specifically set up to target small mounds that get in the way of rivers.\u003Cbr\u003EThe terrain sampling on the watershed model helps to avoid most rough terrain and bumps, but rarely some get through so this is used to carve through them.\u003Cbr\u003EIt carves canyons into the terrain a little bit, but its worth it to prevent streams from being split apart by a mound.",
               "isNested": false
             },
             {
@@ -955,14 +955,14 @@
       "fileName": "BraidedConfig.json",
       "className": "BraidedConfig",
       "displayName": "Braided",
-      "description": "Settings for how braided streams are warped into meanders then overlaid with multiple meandering iterations to create point bars and a braided channel effect.\u003Cbr\u003EBraided streams have its own versions of the meandering configs, so that braided streams can be adjusted separately from meandering streams.\u003Cbr\u003EBraided streams try to emulate what you see in this video: https://youtu.be/X5mgHu2bMvI",
+      "description": "Settings for how braided streams are warped into meanders then overlaid with multiple meandering iterations to create point bars and a braided channel effect.\u003Cbr\u003EBraided streams have its own versions of the meandering configs, so that braided streams can be adjusted separately from meandering streams.",
       "properties": [
         {
           "name": "EnabledChance",
           "jsonPropertyName": "EnabledChance",
           "type": "int",
           "defaultValue": 0,
-          "description": "Percent Chance for a meandering stream to have braided streams.",
+          "description": "Percent Chance for a meandering stream to have braided streams.\u003Cbr\u003EBraided streams try to emulate what you see in this video: https://youtu.be/X5mgHu2bMvI",
           "isNested": false
         },
         {
@@ -1385,7 +1385,7 @@
           "jsonPropertyName": "WaterBelowStreamBed",
           "type": "int",
           "defaultValue": 6,
-          "description": "Number of blocks below the center stream bed that air blocks turns to water.\u003Cbr\u003EIf the center of the river is on a bump and to the side the bed is deeper, this needs to be large enough to make up the difference.",
+          "description": "The distance in blocks below the center of the stream bed, that air blocks turns to water.\u003Cbr\u003EThis fills in water when there are indents around the center of the stream. For example if one side of the river is deeper than the center.\u003Cbr\u003EIf the center of the river is on a bump and to the side the bed is deeper, this needs to be large enough to make up the difference.",
           "isNested": false
         },
         {
@@ -1433,7 +1433,7 @@
           "jsonPropertyName": "UpstreamBankHeightSampling",
           "type": "nested",
           "defaultValue": null,
-          "description": "Configuration for sampling the upstream bank heights.\u003Cbr\u003EThese sampled heights constrain the water height from exceeding the banks.\u003Cbr\u003EWe sample upstream from each position to help prevent water from being higher than water upstream.\u003Cbr\u003EUses the median of multiple upstream bank heights to prevent sudden water level changes from terrain bumps on individual bank points.",
+          "description": "Configuration for sampling the upstream bank heights.\u003Cbr\u003EThese sampled heights constrain the water height from exceeding the banks.\u003Cbr\u003EThe water placement samples upstream from each position to help prevent water from being higher than water upstream.\u003Cbr\u003EUses the median of multiple upstream bank heights to prevent sudden water level changes from terrain bumps on individual bank points.",
           "isNested": true,
           "nestedClassName": "UpstreamBankHeightSamplingConfig",
           "nestedProperties": [
