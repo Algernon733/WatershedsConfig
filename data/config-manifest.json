@@ -121,7 +121,9 @@
           "step": 1,
           "images": [
             { "src": "images/Stream Generation/small_11_and_16.png", "description": "11 small chunk long stream above, 16 small chunk long stream below" },
-            { "src": "images/Stream Generation/large_16.png", "description": "16 large chunk long stream, twice as long as small scale" }
+            { "src": "images/Stream Generation/large_16.png", "description": "16 large chunk long stream, twice as long as small scale" },
+            { "src": "images/Stream Generation/worldmap15max.png", "description": "What streams look like with a max stream length of 15." },
+            { "src": "images/Stream Generation/worldmap21max.png", "description": "What streams look like with a max stream length of 21." }
           ]
         },
         "MinStreamLength": {
