@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-20T17:54:39.8363332Z",
+  "generatedAt": "2026-02-22T23:35:58.4369073Z",
   "configs": [
     {
       "fileName": "TerrainAnalysisConfig.json",
@@ -108,7 +108,7 @@
           "jsonPropertyName": "MaxStreamLength",
           "type": "int",
           "defaultValue": 11,
-          "description": "The primary setting for performance.\u003Cbr\u003EMaximum possible length for a stream in small (32x32) and large (64x64) chunks.\u003Cbr\u003EA 10 chunk long stream would be 640 blocks long if it is a large scale stream, and 320 blocks long if it is small scale.\u003Cbr\u003EThe size of the watershed model that generates around you increases exponentially with the max stream length.\u003Cbr\u003EA max length below 10 will have world generation speed at almost the same speed as basegame.\u003Cbr\u003EA max length above 20 will leave you waiting for chunks to generate.\u003Cbr\u003EThis also has diminishing returns on what you get, as terrain that can support long rivers is rare unless you scale up the terrain in the basegame\u0027s world settings.\u003Cbr\u003ELarge scale streams with a max stream length of 15 chunks will cover almost all stream-suitable slope paths you\u0027ll find. At that length on a good CPU \u0026 render distance you could continually travel without catching up to generating chunks.\u003Cbr\u003EIf you want a max length above 15 make sure you have a good CPU or you\u0027re playing on a dedicated server.",
+          "description": "The primary setting for performance.\u003Cbr\u003EMaximum possible length for a stream in small (32x32) and large (64x64) chunks.\u003Cbr\u003EA 10 chunk long stream would be 640 blocks long if it is a large scale stream, and 320 blocks long if it is small scale.\u003Cbr\u003EThe size of the watershed model that generates around you increases exponentially with the max stream length.\u003Cbr\u003EA max length below 10 will have world generation speed at almost the same speed as basegame.\u003Cbr\u003EA max length above 20 will leave you waiting for chunks to generate.\u003Cbr\u003EThis also has diminishing returns on what you get, as terrain that can support long rivers is rare unless you scale up the terrain in the basegame\u0027s world settings.\u003Cbr\u003ELarge scale streams with a max stream length of 15 chunks will cover almost all stream-suitable slope paths you\u0027ll find. At that length on a good CPU \u0026 render distance you could continually travel without catching up to generating chunks.\u003Cbr\u003EIf you want a max length above 15 make sure you have a good CPU or you\u0027re playing on a dedicated server.\u003Cbr\u003EGets pretty crazy above stream length 21, later i\u0027ll make a preset for very long streams.",
           "isNested": false
         },
         {
@@ -1009,7 +1009,7 @@
           "name": "CaptureGap",
           "jsonPropertyName": "CaptureGap",
           "type": "int",
-          "defaultValue": 1,
+          "defaultValue": 2,
           "description": "Number of meandering iterations between each historical path capture.\u003Cbr\u003EA higher CaptureGap means more visual difference between historical paths.\u003Cbr\u003EWith 29 iterations, 5 historical captures, and gap of 4: captures at iterations 8, 12, 16, 20, 24, final at 28.",
           "isNested": false
         },
@@ -1017,7 +1017,7 @@
           "name": "MeanderIterations",
           "jsonPropertyName": "MeanderIterations",
           "type": "int",
-          "defaultValue": 10,
+          "defaultValue": 12,
           "description": "Number of iterative passes for the progressive meandering on braided streams.\u003Cbr\u003EEach iteration applies small displacements that accumulate over the iterations into larger meanders.\u003Cbr\u003ENot enough iterations and the streams will be basic, more closely resembling their base bezier curves.\u003Cbr\u003EAfter a certain point the iterations becomes meaningless. You can meander the streams forever.",
           "isNested": false
         },
@@ -1025,7 +1025,7 @@
           "name": "SinuosityAtSource",
           "jsonPropertyName": "SinuosityAtSource",
           "type": "float",
-          "defaultValue": 1.225,
+          "defaultValue": 1.145,
           "description": "Sinuosity at the braided stream source.\u003Cbr\u003ESinuosity scales the amplitude of the meandering sine-based curves per iteration.\u003Cbr\u003EThe sinuosity lerps from the source to the anchor based on the distance along the stream.\u003Cbr\u003ESuper volatile value, completely changes how meandering works with even a tiny change.",
           "isNested": false
         },
@@ -1033,7 +1033,7 @@
           "name": "SinuosityAtAnchor",
           "jsonPropertyName": "SinuosityAtAnchor",
           "type": "float",
-          "defaultValue": 1.225,
+          "defaultValue": 1.145,
           "description": "Sinuosity at the anchor point for braided streams.\u003Cbr\u003EStreams longer than anchor length continue extrapolating linearly.\u003Cbr\u003E1.0 means a straight line. 1.5\u002B gives massive meandering.\u003Cbr\u003EThe sinuosity lerps from the source to the anchor based on the distance along the stream.\u003Cbr\u003ESuper volatile value, completely changes how meandering works with even a tiny change.",
           "isNested": false
         },
@@ -1081,7 +1081,7 @@
           "name": "BeltWidthToStreamWidthRatio",
           "jsonPropertyName": "BeltWidthToStreamWidthRatio",
           "type": "float",
-          "defaultValue": 9,
+          "defaultValue": 1.5,
           "description": "Target ratio of meander belt width to stream bed width for braided streams. Only used when UseConstantBeltWidthRatio is true.\u003Cbr\u003E0.35 means the meander belt width is 35% of stream width. Higher that than means you get wider meander belts relative to the stream width.\u003Cbr\u003EThe wavelength multipliers are automatically calculated from this ratio and the sinuosity values.",
           "isNested": false
         },
@@ -1149,7 +1149,7 @@
               "name": "WindowRadius",
               "jsonPropertyName": "WindowRadius",
               "type": "int",
-              "defaultValue": 8,
+              "defaultValue": 16,
               "description": "Number of neighboring points on each side to include in smoothing window for braided streams.\u003Cbr\u003EControls spatial extent of smoothing effect. Applied per iteration.\u003Cbr\u003E1 gives a 3-point window (current \u002B 2 neighbors), 2 gives a 5-point window, 3 gives a 7-point window.",
               "isNested": false
             },
@@ -1157,7 +1157,7 @@
               "name": "Strength",
               "jsonPropertyName": "Strength",
               "type": "float",
-              "defaultValue": 0.8,
+              "defaultValue": 3,
               "description": "Controls the intensity of the smoothing within the smoothing window for braided streams.\u003Cbr\u003E0.0 to 1.0 is no smoothing to full smoothing, and 1.0\u002B is even more smoothing.\u003Cbr\u003EAdjust together with WindowRadius.",
               "isNested": false
             }
@@ -1227,7 +1227,7 @@
               "name": "MinWavelengthArcLengthFraction",
               "jsonPropertyName": "MinWavelengthArcLengthFraction",
               "type": "float",
-              "defaultValue": 0.6,
+              "defaultValue": 0.2,
               "description": "Minimum arc length gap between segments of the braided stream path, as a fraction of the local wavelength.\u003Cbr\u003EOnly segment pairs separated by at least this fraction of the wavelength are checked for oxbow cutoffs.",
               "isNested": false
             },
