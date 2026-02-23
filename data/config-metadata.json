@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-22T23:35:58.4369073Z",
+  "generatedAt": "2026-02-23T02:37:20.6623019Z",
   "configs": [
     {
       "fileName": "TerrainAnalysisConfig.json",
@@ -3326,7 +3326,10 @@
       "displayName": "Oceans With 512 World Height on a Good CPU or Server",
       "overrides": {
         "BraidedConfig": {
-          "EnabledChance": 40
+          "EnabledChance": 40,
+          "SteepTerrainStraightening": {
+            "SearchRadius": 2
+          }
         },
         "ExtraFeaturesConfig": {
           "CoastalTerrain": {
@@ -3335,7 +3338,10 @@
           }
         },
         "MeanderingConfig": {
-          "EnabledChance": 60
+          "EnabledChance": 60,
+          "SteepTerrainStraightening": {
+            "SearchRadius": 2
+          }
         },
         "StreamGenerationConfig": {
           "MaxStreamLength": 19
