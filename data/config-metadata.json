@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-02-23T02:37:20.6623019Z",
+  "generatedAt": "2026-02-23T16:23:29.8060312Z",
   "configs": [
     {
       "fileName": "TerrainAnalysisConfig.json",
@@ -3228,7 +3228,7 @@
           "name": "BaseVolume",
           "jsonPropertyName": "BaseVolume",
           "type": "float",
-          "defaultValue": 0.025,
+          "defaultValue": 0.0125,
           "description": "Base volume for stream sounds at the stream source.\u003Cbr\u003E0.0 is no sound, 1.0 is full volume.",
           "isNested": false
         },
@@ -3236,7 +3236,7 @@
           "name": "MaxVolume",
           "jsonPropertyName": "MaxVolume",
           "type": "float",
-          "defaultValue": 1,
+          "defaultValue": 0.5,
           "description": "Maximum volume that stream sounds can reach.\u003Cbr\u003E0.0 is no sound, 1.0 is full volume.",
           "isNested": false
         },
