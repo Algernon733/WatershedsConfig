@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-09T08:18:00.2793217Z",
+  "generatedAt": "2026-03-09T08:27:39.6470174Z",
   "configs": [
     {
       "fileName": "TerrainAnalysisConfig.json",
@@ -1464,28 +1464,39 @@
           ]
         },
         {
-          "name": "UseRapidsAtStreamEdges",
-          "jsonPropertyName": "UseRapidsAtStreamEdges",
-          "type": "bool",
-          "defaultValue": false,
-          "description": "Turns the spreading normal freshwater blocks near steep terrain(waterfalls) into rapid water blocks.",
-          "isNested": false
-        },
-        {
-          "name": "RapidsSteepnessThreshold",
-          "jsonPropertyName": "RapidsSteepnessThreshold",
-          "type": "float",
-          "defaultValue": 0.3,
-          "description": "The minimum steepness of the terrain around spreading stream water for it to be turned into rapids.\u003Cbr\u003ELower means more rapids, higher means less rapids.",
-          "isNested": false
-        },
-        {
-          "name": "RapidsSteepnessSearchRadius",
-          "jsonPropertyName": "RapidsSteepnessSearchRadius",
-          "type": "int",
-          "defaultValue": 10,
-          "description": "The search radius around a stream area for checking the terrain steepness when deciding to turn spreading stream water into rapids.\u003Cbr\u003ELower means rapids are placed closer to the steepest parts of a stream(the drop in a waterfall). Higher means rapids fill up a larger area within and around steep stream areas.",
-          "isNested": false
+          "name": "RapidsAtStreamEdges",
+          "jsonPropertyName": "RapidsAtStreamEdges",
+          "type": "nested",
+          "defaultValue": null,
+          "description": "Configuration for rapids placement near steep stream terrain like waterfalls.",
+          "isNested": true,
+          "nestedClassName": "RapidsAtStreamEdgesConfig",
+          "nestedProperties": [
+            {
+              "name": "Enabled",
+              "jsonPropertyName": "Enabled",
+              "type": "bool",
+              "defaultValue": true,
+              "description": "Turns the spreading normal freshwater blocks near steep terrain(waterfalls) into rapid water blocks.",
+              "isNested": false
+            },
+            {
+              "name": "SteepnessThreshold",
+              "jsonPropertyName": "SteepnessThreshold",
+              "type": "float",
+              "defaultValue": 0.3,
+              "description": "The minimum steepness of the terrain around spreading stream water for it to be turned into rapids.\u003Cbr\u003ELower means more rapids, higher means less rapids.",
+              "isNested": false
+            },
+            {
+              "name": "SteepnessSearchRadius",
+              "jsonPropertyName": "SteepnessSearchRadius",
+              "type": "int",
+              "defaultValue": 10,
+              "description": "The search radius around a stream area for checking the terrain steepness when deciding to turn spreading stream water into rapids.\u003Cbr\u003ELower means rapids are placed closer to the steepest parts of a stream(the drop in a waterfall). Higher means rapids fill up a larger area within and around steep stream areas.",
+              "isNested": false
+            }
+          ]
         },
         {
           "name": "StreamWaterPush",
