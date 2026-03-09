@@ -14,10 +14,11 @@ async function init() {
     const actionsEl = document.getElementById('actions');
 
     try {
-        // Load both JSON files in parallel
+        // Load both JSON files in parallel, cache-bust to ensure fresh data
+        const cacheBust = `?t=${Date.now()}`;
         const [metadataResponse, manifestResponse] = await Promise.all([
-            fetch('data/config-metadata.json'),
-            fetch('data/config-manifest.json')
+            fetch(`data/config-metadata.json${cacheBust}`),
+            fetch(`data/config-manifest.json${cacheBust}`)
         ]);
 
         if (!metadataResponse.ok) {
