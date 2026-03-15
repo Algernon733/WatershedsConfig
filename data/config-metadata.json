@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-09T08:32:05.589373Z",
+  "generatedAt": "2026-03-15T18:54:29.0839662Z",
   "configs": [
     {
       "fileName": "TerrainAnalysisConfig.json",
@@ -1392,7 +1392,7 @@
           "name": "WaterAboveStreamBedMaximum",
           "jsonPropertyName": "WaterAboveStreamBedMaximum",
           "type": "int",
-          "defaultValue": 8,
+          "defaultValue": 30,
           "description": "Maximum water height above the stream bed.\u003Cbr\u003EIts still capped by the heights of the stream banks, so you can\u0027t make it go super high.\u003Cbr\u003EYou can lower this to make the river water shallower, or higher if you make the rivers larger and deeper to make the water still reach the banks.",
           "isNested": false
         },
