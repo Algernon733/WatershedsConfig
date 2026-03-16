@@ -88,10 +88,15 @@ async function init() {
             containerEl.appendChild(section);
         });
 
+        // Reset advanced toggle to off on every page load
+        const showAdvancedCheckbox = document.getElementById('show-advanced');
+        showAdvancedCheckbox.checked = false;
+        document.body.classList.remove('show-advanced');
+
         // Event listeners
         document.getElementById('reset-all').addEventListener('click', resetAll);
         document.getElementById('download-config').addEventListener('click', downloadConfig);
-        document.getElementById('show-advanced').addEventListener('change', toggleAdvancedSettings);
+        showAdvancedCheckbox.addEventListener('change', toggleAdvancedSettings);
         presetSelect.addEventListener('change', e => switchPreset(e.target.value));
 
     } catch (error) {
@@ -283,8 +288,10 @@ async function downloadConfig() {
     try {
         await generateZip(configMetadata, currentValues);
 
-        // Show instructions
-        document.getElementById('download-instructions').style.display = 'block';
+        // Activate instructions (gray -> green)
+        const instructionsEl = document.getElementById('download-instructions');
+        instructionsEl.classList.remove('download-inactive');
+        instructionsEl.classList.add('download-active');
 
         // Scroll to instructions
         document.getElementById('download-instructions').scrollIntoView({ behavior: 'smooth' });

@@ -791,10 +791,19 @@ body.show-advanced .advanced-warning {
 #download-instructions {
     margin-top: 25px;
     padding: 20px;
-    background: var(--success-bg);
-    border: 1px solid var(--success-border);
     border-radius: 4px;
     text-align: center;
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+}
+
+#download-instructions.download-inactive {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+}
+
+#download-instructions.download-active {
+    background: var(--success-bg);
+    border: 1px solid var(--success-border);
 }
 
 #download-instructions h3 {
@@ -817,6 +826,7 @@ body.show-advanced .advanced-warning {
     font-size: 0.9em;
     color: var(--text-heading);
 }
+
 
 /* Footer */
 footer {
