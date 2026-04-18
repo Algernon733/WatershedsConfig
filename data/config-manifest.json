@@ -37,6 +37,167 @@
         }
       }
     },
+    "TerrainErosionConfig": {
+      "visible": true,
+      "displayName": "Terrain Erosion",
+      "image": "images/terrain-erosion.png",
+      "order": 99,
+      "properties": {
+        "Enabled": {
+          "inputType": "toggle"
+        },
+        "Strength": {
+          "inputType": "slider",
+          "min": 0,
+          "max": 0.25,
+          "step": 0.005,
+          "advanced": true
+        },
+        "SlopeResolution": {
+          "advanced": true
+        },
+        "CellFrequency": {
+          "inputType": "slider",
+          "min": 0.005,
+          "max": 0.1,
+          "step": 0.001,
+          "advanced": true
+        },
+        "OctaveCount": {
+          "inputType": "slider",
+          "min": 1,
+          "max": 6,
+          "step": 1,
+          "advanced": true
+        },
+        "Detail": {
+          "inputType": "slider",
+          "min": 0,
+          "max": 2,
+          "step": 0.05,
+          "advanced": true
+        },
+        "Lacunarity": {
+          "inputType": "slider",
+          "min": 0.1,
+          "max": 2,
+          "step": 0.05,
+          "advanced": true
+        },
+        "BranchStrength": {
+          "inputType": "slider",
+          "min": 0,
+          "max": 3,
+          "step": 0.1,
+          "advanced": true
+        },
+        "ErosionSlopeSensitivityInitialOctave": {
+          "inputType": "slider",
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "advanced": true
+        },
+        "ErosionSlopeSensitivitySuccessiveOctaves": {
+          "inputType": "slider",
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "advanced": true
+        },
+        "RidgeMapSensitivityInitialOctave": {
+          "inputType": "slider",
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "advanced": true
+        },
+        "RidgeMapSensitivitySuccessiveOctaves": {
+          "inputType": "slider",
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "advanced": true
+        },
+        "ErosionBoundaryRoundingInitialOctave": {
+          "inputType": "slider",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "advanced": true
+        },
+        "ErosionBoundaryRoundingSuccessiveOctaves": {
+          "inputType": "slider",
+          "min": 0,
+          "max": 5,
+          "step": 0.1,
+          "advanced": true
+        },
+        "ErosionWaveMinFrequency": {
+          "inputType": "slider",
+          "min": 0.00001,
+          "max": 0.01,
+          "step": 0.00001,
+          "advanced": true
+        },
+        "FullErosionWaveFrequencyAtThisSteepness": {
+          "inputType": "slider",
+          "min": 0,
+          "max": 3,
+          "step": 0.05,
+          "advanced": true
+        },
+        "SteepnessEffectOnErosionWaveFrequency": {
+          "inputType": "slider",
+          "min": 0,
+          "max": 3,
+          "step": 0.05,
+          "advanced": true
+        },
+        "GullyFadeOnFlatSlopes": {
+          "inputType": "slider",
+          "min": 0,
+          "max": 1,
+          "step": 0.05,
+          "advanced": true
+        },
+        "GullyFadeSlopeThreshold": {
+          "inputType": "slider",
+          "min": 0,
+          "max": 20,
+          "step": 0.5,
+          "advanced": true
+        },
+        "SteepSlopeFadeStart": {
+          "inputType": "slider",
+          "min": 0,
+          "max": 5,
+          "step": 0.1,
+          "advanced": true
+        },
+        "SteepSlopeFadeEnd": {
+          "inputType": "slider",
+          "min": 0,
+          "max": 10,
+          "step": 0.1,
+          "advanced": true
+        },
+        "RidgeRounding": {
+          "inputType": "slider",
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "advanced": true
+        },
+        "GullyRounding": {
+          "inputType": "slider",
+          "min": 0,
+          "max": 1,
+          "step": 0.01,
+          "advanced": true
+        }
+      }
+    },
     "FlowSimulationConfig": {
       "visible": true,
       "advanced": true,
@@ -1334,38 +1495,26 @@
       "image": "images/stream-sound.png",
       "order": 13,
       "properties": {
-        "BaseVolume": {
-          "inputType": "slider",
-          "min": 0,
-          "max": 1,
-          "step": 0.05
-        },
         "MaxVolume": {
           "inputType": "slider",
           "min": 0,
           "max": 1,
           "step": 0.01
         },
-        "VolumeScaleWithWidth": {
+        "DistanceFalloffStart": {
           "inputType": "slider",
           "min": 0,
-          "max": 2,
-          "step": 0.05
-        },
-        "AmbientBlockCount": {
-          "inputType": "slider",
-          "min": 1,
-          "max": 200,
+          "max": 64,
           "step": 1
         },
-        "LowPassFilterBase": {
-          "advanced": true,
+        "DistanceFalloffEnd": {
           "inputType": "slider",
           "min": 0,
-          "max": 5,
-          "step": 0.01
+          "max": 64,
+          "step": 1
         },
-        "LowPassFilterWidthScale": {
+        "EnableCustomStreamSound": {},
+        "LowPassFilterBase": {
           "advanced": true,
           "inputType": "slider",
           "min": 0,
@@ -1378,8 +1527,7 @@
           "min": 0,
           "max": 5,
           "step": 0.01
-        },
-        "EnableFrequencyFiltering": { "advanced": true }
+        }
       }
     },
     "PerformanceAndDebugConfig": {

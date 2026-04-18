@@ -166,6 +166,9 @@ function renderInput(prop, propManifest, configClass, path, currentValue) {
         case 'int[]':
             return renderArrayInput(id, configClass, path, currentValue, prop.type);
 
+        case 'string[]':
+            return renderStringArrayInput(id, configClass, path, currentValue);
+
         case 'string':
             return renderTextInput(id, configClass, path, currentValue);
 
@@ -233,6 +236,17 @@ function renderArrayInput(id, configClass, path, currentValue, type) {
     `).join('');
 
     return `<div class="array-input">${inputs}</div>`;
+}
+
+function renderStringArrayInput(id, configClass, path, currentValue) {
+    const arr = Array.isArray(currentValue) ? currentValue : [];
+    const text = arr.join('\n');
+    const dataPath = `${configClass}.${path}`;
+    return `
+        <textarea id="${id}" rows="${Math.min(Math.max(arr.length, 3), 20)}" data-config-path="${dataPath}"
+            style="width: 100%; font-family: monospace; font-size: 0.85em; resize: vertical;"
+            onchange="window.configOnChange('${configClass}', '${path}', this.value.split('\\n').map(s => s.trim()).filter(s => s))">${escapeHtml(text)}</textarea>
+    `;
 }
 
 function renderTextInput(id, configClass, path, currentValue) {

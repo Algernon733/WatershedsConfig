@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-16T16:36:23.2127548Z",
+  "generatedAt": "2026-04-18T22:12:30.388066Z",
   "configs": [
     {
       "fileName": "TerrainAnalysisConfig.json",
@@ -29,6 +29,198 @@
           "type": "float",
           "defaultValue": 1.5,
           "description": "RMSE in blocks (Root Mean Squared Error) for large-scale streams (64x64 chunks).\u003Cbr\u003ERMSE measures how much terrain deviates from a smooth plane.\u003Cbr\u003ESteep but consistent slopes have low RMSE, bumpy terrain with many ups and downs have high RMSE.\u003Cbr\u003ELarge streams are lower resolution so they need smoother terrain than small streams.\u003Cbr\u003EIncrease this to allow large scale streams on bumpier terrain.",
+          "isNested": false
+        }
+      ]
+    },
+    {
+      "fileName": "TerrainErosionConfig.json",
+      "className": "TerrainErosionConfig",
+      "displayName": "Terrain Erosion",
+      "description": "Settings for the terrain erosion noise filter.\u003Cbr\u003EErosion creates branching gullies and ridges on the terrain.\u003Cbr\u003ETaken from Runevision\u0027s erosion filter: https://blog.runevision.com/2026/03/fast-and-gorgeous-erosion-filter.html",
+      "properties": [
+        {
+          "name": "Enabled",
+          "jsonPropertyName": "Enabled",
+          "type": "bool",
+          "defaultValue": false,
+          "description": "Whether this erosion noise filter is used or not.",
+          "isNested": false
+        },
+        {
+          "name": "Strength",
+          "jsonPropertyName": "Strength",
+          "type": "float",
+          "defaultValue": 0.1,
+          "description": "Strength of the erosion\u0027s effect on the terrain.\u003Cbr\u003EHigher strength values are super crazy, keep this between 0.0 and 0.25",
+          "isNested": false
+        },
+        {
+          "name": "SlopeResolution",
+          "jsonPropertyName": "SlopeResolution",
+          "type": "int",
+          "defaultValue": 8,
+          "description": "The size of the chunks, defined in blocks squared (so 8 gives a 8x8 chunk) which are used to create sampled terrain slopes for the erosion filter.\u003Cbr\u003EIt can do these resolutions: 2 4 8 16 32 64",
+          "isNested": false
+        },
+        {
+          "name": "CellFrequency",
+          "jsonPropertyName": "CellFrequency",
+          "type": "float",
+          "defaultValue": 0.02,
+          "description": "Frequency of the of voronoi cells. These cells are used to anchor and pivot the direction of the stripe erosion pattern.\u003Cbr\u003EMore frequent cells mean smaller cells and therefore smaller gully \u0026 ridge stripes.\u003Cbr\u003EAnd vice-versa less frequent means larger cells and larger gullies \u0026 ridges.",
+          "isNested": false
+        },
+        {
+          "name": "OctaveCount",
+          "jsonPropertyName": "OctaveCount",
+          "type": "int",
+          "defaultValue": 3,
+          "description": "Number of octaves of the terrain erosion stripes. Works just like noise octaves where each successive octave is a smaller version of the previous.\u003Cbr\u003EMore octaves give more complex erosion patterns.",
+          "isNested": false
+        },
+        {
+          "name": "Detail",
+          "jsonPropertyName": "Detail",
+          "type": "float",
+          "defaultValue": 1,
+          "description": "Controls how much the smaller octave ridge and gulley stripes override the previous larger octaves.\u003Cbr\u003EHigher detail means that you get better defined small ridges/gulleys ontop of the larger ones.\u003Cbr\u003ELower detail means that the larger ridges/gulleys define the stripe/wave shape more.",
+          "isNested": false
+        },
+        {
+          "name": "Lacunarity",
+          "jsonPropertyName": "Lacunarity",
+          "type": "float",
+          "defaultValue": 0.75,
+          "description": "Size ratio between successive octaves.\u003Cbr\u003E0.5 means each octave\u0027s gullies/ridges are half the size of the previous octave.",
+          "isNested": false
+        },
+        {
+          "name": "BranchStrength",
+          "jsonPropertyName": "BranchStrength",
+          "type": "float",
+          "defaultValue": 3,
+          "description": "How much smaller erosion octaves/branches are rotated away from the larger/previous octave/branch.\u003Cbr\u003EHigher creates a lot of v-like branching, lower gives a striated/parallel ll-like look.",
+          "isNested": false
+        },
+        {
+          "name": "ErosionSlopeSensitivityInitialOctave",
+          "jsonPropertyName": "ErosionSlopeSensitivityInitialOctave",
+          "type": "float",
+          "defaultValue": 0.15,
+          "description": "Based on the pre-erosion terrain slope, how much erosion should be allowed to go through on the first octave.",
+          "isNested": false
+        },
+        {
+          "name": "ErosionSlopeSensitivitySuccessiveOctaves",
+          "jsonPropertyName": "ErosionSlopeSensitivitySuccessiveOctaves",
+          "type": "float",
+          "defaultValue": 0.9,
+          "description": "Based on the erosion slopes from all the previous octaves, how much erosion on the current octave should be allowed to go through.",
+          "isNested": false
+        },
+        {
+          "name": "RidgeMapSensitivityInitialOctave",
+          "jsonPropertyName": "RidgeMapSensitivityInitialOctave",
+          "type": "float",
+          "defaultValue": 1,
+          "description": "Based on the pre-erosion terrain slope, how much of the ridge shape/pattern should be allowed to go through on the first octave.",
+          "isNested": false
+        },
+        {
+          "name": "RidgeMapSensitivitySuccessiveOctaves",
+          "jsonPropertyName": "RidgeMapSensitivitySuccessiveOctaves",
+          "type": "float",
+          "defaultValue": 0.9,
+          "description": "Based on the ridge patterns/shapes from all the previous octaves, how much of the ridge shape/pattern on the current octave should be allowed to go through.",
+          "isNested": false
+        },
+        {
+          "name": "ErosionBoundaryRoundingInitialOctave",
+          "jsonPropertyName": "ErosionBoundaryRoundingInitialOctave",
+          "type": "float",
+          "defaultValue": 40,
+          "description": "How rounded the boundary fade between flat (uneroded) and sloped (eroded) terrain is on the first octave.",
+          "isNested": false
+        },
+        {
+          "name": "ErosionBoundaryRoundingSuccessiveOctaves",
+          "jsonPropertyName": "ErosionBoundaryRoundingSuccessiveOctaves",
+          "type": "float",
+          "defaultValue": 1,
+          "description": "Based on the uneroded/eroded landform boundry fade from all the previous octaves, how much this multiplier should shrink/grow the boundry fade effect on the current octave.\u003Cbr\u003EHaven\u0027t really seen a need to adjust this since the erosion fade between erodable and unerodable landforms has been subtle so far.\u003Cbr\u003EBut if you somehow set up the erosion to a state where the boundry fade is obvious, use this to roughen up the transition.",
+          "isNested": false
+        },
+        {
+          "name": "ErosionWaveMinFrequency",
+          "jsonPropertyName": "ErosionWaveMinFrequency",
+          "type": "float",
+          "defaultValue": 0.0001,
+          "description": "Minimum frequency multiplier on the flattest terrain. Prevents stripes from widening infinitely.",
+          "isNested": false
+        },
+        {
+          "name": "FullErosionWaveFrequencyAtThisSteepness",
+          "jsonPropertyName": "FullErosionWaveFrequencyAtThisSteepness",
+          "type": "float",
+          "defaultValue": 0.75,
+          "description": "The slope magnitude at which erosion frequency is fully unaffected by the erosion fade out on flat slopes.",
+          "isNested": false
+        },
+        {
+          "name": "SteepnessEffectOnErosionWaveFrequency",
+          "jsonPropertyName": "SteepnessEffectOnErosionWaveFrequency",
+          "type": "float",
+          "defaultValue": 1,
+          "description": "How much flat terrain slopes widen out the erosion waves, which effectively fades out the erosion effect.",
+          "isNested": false
+        },
+        {
+          "name": "GullyFadeOnFlatSlopes",
+          "jsonPropertyName": "GullyFadeOnFlatSlopes",
+          "type": "float",
+          "defaultValue": 1,
+          "description": "How much gullies fade out on flat slopes. Doesn\u0027t affect ridges.",
+          "isNested": false
+        },
+        {
+          "name": "GullyFadeSlopeThreshold",
+          "jsonPropertyName": "GullyFadeSlopeThreshold",
+          "type": "float",
+          "defaultValue": 5,
+          "description": "The slope magnitude below which gullies start fading out.\u003Cbr\u003ESlopes steeper than this threshold get full gully detail.\u003Cbr\u003ESlopes flatter than this have their gullies progressively faded.",
+          "isNested": false
+        },
+        {
+          "name": "SteepSlopeFadeStart",
+          "jsonPropertyName": "SteepSlopeFadeStart",
+          "type": "float",
+          "defaultValue": 1.5,
+          "description": "The slope magnitude at which erosion starts fading out on steep terrain.\u003Cbr\u003ESlopes gentler than this get full erosion. Slopes steeper than this have erosion progressively reduced.",
+          "isNested": false
+        },
+        {
+          "name": "SteepSlopeFadeEnd",
+          "jsonPropertyName": "SteepSlopeFadeEnd",
+          "type": "float",
+          "defaultValue": 3,
+          "description": "The slope magnitude at which erosion is fully faded out on steep terrain.\u003Cbr\u003ESlopes steeper than this get no erosion at all.",
+          "isNested": false
+        },
+        {
+          "name": "RidgeRounding",
+          "jsonPropertyName": "RidgeRounding",
+          "type": "float",
+          "defaultValue": 0.15,
+          "description": "How much to round/soften the tops of ridges.\u003Cbr\u003EMore means smoother/wider, less means sharper.",
+          "isNested": false
+        },
+        {
+          "name": "GullyRounding",
+          "jsonPropertyName": "GullyRounding",
+          "type": "float",
+          "defaultValue": 0.05,
+          "description": "How much to round/soften the bottoms of gullies.\u003Cbr\u003EMore means smoother/wider, less means sharper.",
           "isNested": false
         }
       ]
@@ -3268,35 +3460,11 @@
       "description": "Stream sound settings.",
       "properties": [
         {
-          "name": "BaseVolume",
-          "jsonPropertyName": "BaseVolume",
-          "type": "float",
-          "defaultValue": 0.0125,
-          "description": "Base volume for stream sounds at the stream source.\u003Cbr\u003E0.0 is no sound, 1.0 is full volume.",
-          "isNested": false
-        },
-        {
           "name": "MaxVolume",
           "jsonPropertyName": "MaxVolume",
           "type": "float",
           "defaultValue": 0.5,
-          "description": "Maximum volume that stream sounds can reach.\u003Cbr\u003E0.0 is no sound, 1.0 is full volume.",
-          "isNested": false
-        },
-        {
-          "name": "VolumeScaleWithWidth",
-          "jsonPropertyName": "VolumeScaleWithWidth",
-          "type": "float",
-          "defaultValue": 0.75,
-          "description": "Additional volume added at the anchor length.\u003Cbr\u003EThe volume scales along the streams from BaseVolume to VolumeScaleWithWidth.",
-          "isNested": false
-        },
-        {
-          "name": "AmbientBlockCount",
-          "jsonPropertyName": "AmbientBlockCount",
-          "type": "float",
-          "defaultValue": 12,
-          "description": "Number of stream blocks needed to reach the full sound volume.\u003Cbr\u003ELower AmbientBlockCount makes streams louder with fewer blocks",
+          "description": "Volume of stream sounds at or inside DistanceFalloffStart.\u003Cbr\u003E0.0 is no sound, 1.0 is full volume.",
           "isNested": false
         },
         {
@@ -3312,15 +3480,7 @@
           "jsonPropertyName": "LowPassFilterBase",
           "type": "float",
           "defaultValue": 1.2,
-          "description": "Base low-pass filter amount for narrow stream sounds.\u003Cbr\u003ELower LowPassFilterBase reduces high frequencies at the source.",
-          "isNested": false
-        },
-        {
-          "name": "LowPassFilterWidthScale",
-          "jsonPropertyName": "LowPassFilterWidthScale",
-          "type": "float",
-          "defaultValue": 0.55,
-          "description": "How much to reduce high frequencies as stream width increases.\u003Cbr\u003EWider streams have more bass.",
+          "description": "Base low-pass filter amount applied to stream sounds at the source.\u003Cbr\u003ELower LowPassFilterBase reduces high frequencies at the source.",
           "isNested": false
         },
         {
@@ -3328,89 +3488,207 @@
           "jsonPropertyName": "LowPassFilterMinimum",
           "type": "float",
           "defaultValue": 0.35,
-          "description": "Minimum low-pass filter value for the widest streams.",
+          "description": "Minimum low-pass filter value after indoor dampening.",
           "isNested": false
         },
         {
-          "name": "EnableFrequencyFiltering",
-          "jsonPropertyName": "EnableFrequencyFiltering",
-          "type": "bool",
-          "defaultValue": true,
-          "description": "Whether to enable dynamic frequency filtering based on distance from the stream and the local stream width",
+          "name": "DistanceFalloffStart",
+          "jsonPropertyName": "DistanceFalloffStart",
+          "type": "float",
+          "defaultValue": 4,
+          "description": "Volume starts falling off at this distance from the stream water",
+          "isNested": false
+        },
+        {
+          "name": "DistanceFalloffEnd",
+          "jsonPropertyName": "DistanceFalloffEnd",
+          "type": "float",
+          "defaultValue": 12,
+          "description": "Volume is 0 at this distance away from the stream, and gets louder as you get closer.",
           "isNested": false
         }
       ]
     }
   ],
-  "presets": [
+  "presetCategories": [
     {
-      "name": "OceansWith256WorldHeightMidrangeCPU",
-      "displayName": "Oceans With 256 World Height on a Midrange CPU",
-      "overrides": {
-        "BraidedConfig": {
-          "EnabledChance": 40
-        },
-        "ExtraFeaturesConfig": {
-          "CoastalTerrain": {
-            "Enabled": true,
-            "InlandMaxRaising": 15
+      "name": "0-PerformanceAndStreamLength",
+      "displayName": "Performance \u0026 Stream Length",
+      "options": [
+        {
+          "name": "0-simpleFastShort",
+          "displayName": "0 - Simple fast \u0026 short streams",
+          "overrides": {
+            "BraidedConfig": {
+              "EnabledChance": 0,
+              "SteepTerrainStraightening": {
+                "SearchRadius": 1
+              }
+            },
+            "MeanderingConfig": {
+              "EnabledChance": 0,
+              "SteepTerrainStraightening": {
+                "SearchRadius": 1
+              }
+            },
+            "StreamGenerationConfig": {
+              "MaxStreamLength": 12
+            }
           }
         },
-        "MeanderingConfig": {
-          "EnabledChance": 60
+        {
+          "name": "1-mediumStreamsMidCPU",
+          "displayName": "1 - Medium streams, mid CPU \u0026 mid RAM",
+          "overrides": {
+            "BraidedConfig": {
+              "EnabledChance": 40,
+              "SteepTerrainStraightening": {
+                "SearchRadius": 1
+              }
+            },
+            "MeanderingConfig": {
+              "EnabledChance": 60,
+              "SteepTerrainStraightening": {
+                "SearchRadius": 1
+              }
+            },
+            "StreamGenerationConfig": {
+              "MaxStreamLength": 15
+            }
+          }
         },
-        "StreamGenerationConfig": {
-          "MaxStreamLength": 15
+        {
+          "name": "2-longStreamsGoodCPU",
+          "displayName": "2 - Long streams, good CPU \u0026 mid RAM",
+          "overrides": {
+            "BraidedConfig": {
+              "EnabledChance": 40,
+              "SteepTerrainStraightening": {
+                "SearchRadius": 2
+              }
+            },
+            "MeanderingConfig": {
+              "EnabledChance": 60,
+              "SteepTerrainStraightening": {
+                "SearchRadius": 2
+              }
+            },
+            "StreamGenerationConfig": {
+              "MaxStreamLength": 18
+            }
+          }
+        },
+        {
+          "name": "3-veryLongStreamsGoodCPU",
+          "displayName": "3 - Very long streams, good CPU \u0026 mid RAM, wait for generation",
+          "overrides": {
+            "BraidedConfig": {
+              "EnabledChance": 40,
+              "SteepTerrainStraightening": {
+                "SearchRadius": 2
+              }
+            },
+            "MeanderingConfig": {
+              "EnabledChance": 60,
+              "SteepTerrainStraightening": {
+                "SearchRadius": 2
+              }
+            },
+            "StreamGenerationConfig": {
+              "MaxStreamLength": 21
+            }
+          }
         }
-      }
+      ]
     },
     {
-      "name": "OceansWith512WorldHeightGoodCPUOrServer",
-      "displayName": "Oceans With 512 World Height on a Good CPU or Server",
-      "overrides": {
-        "BraidedConfig": {
-          "EnabledChance": 40,
-          "SteepTerrainStraightening": {
-            "SearchRadius": 2
+      "name": "1-CoastalErosion",
+      "displayName": "Coastal Erosion",
+      "options": [
+        {
+          "name": "0-noCoastalErosion",
+          "displayName": "No coastal erosion",
+          "overrides": {}
+        },
+        {
+          "name": "1-256WorldHeight",
+          "displayName": "256 world height coastal erosion",
+          "overrides": {
+            "ExtraFeaturesConfig": {
+              "CoastalTerrain": {
+                "Enabled": true,
+                "InlandMaxRaising": 15
+              }
+            }
           }
         },
-        "ExtraFeaturesConfig": {
-          "CoastalTerrain": {
-            "Enabled": true,
-            "InlandMaxRaising": 30
+        {
+          "name": "2-384WorldHeight",
+          "displayName": "384 world height coastal erosion",
+          "overrides": {
+            "ExtraFeaturesConfig": {
+              "CoastalTerrain": {
+                "Enabled": true,
+                "InlandMaxRaising": 22.5
+              }
+            }
           }
         },
-        "MeanderingConfig": {
-          "EnabledChance": 60,
-          "SteepTerrainStraightening": {
-            "SearchRadius": 2
+        {
+          "name": "3-512WorldHeight",
+          "displayName": "512 world height coastal erosion",
+          "overrides": {
+            "ExtraFeaturesConfig": {
+              "CoastalTerrain": {
+                "Enabled": true,
+                "InlandMaxRaising": 30
+              }
+            }
           }
-        },
-        "StreamGenerationConfig": {
-          "MaxStreamLength": 19
         }
-      }
+      ]
     },
     {
-      "name": "OceansWith512WorldHeightMidrangeCPU",
-      "displayName": "Oceans With 512 World Height on a Midrange CPU",
-      "overrides": {
-        "BraidedConfig": {
-          "EnabledChance": 40
+      "name": "2-TerrainErosion",
+      "displayName": "Terrain Erosion",
+      "options": [
+        {
+          "name": "0-disabled",
+          "displayName": "Disabled",
+          "overrides": {}
         },
-        "ExtraFeaturesConfig": {
-          "CoastalTerrain": {
-            "Enabled": true,
-            "InlandMaxRaising": 30
+        {
+          "name": "1-enabled",
+          "displayName": "Enabled",
+          "overrides": {
+            "TerrainErosionConfig": {
+              "Enabled": true
+            }
           }
-        },
-        "MeanderingConfig": {
-          "EnabledChance": 60
-        },
-        "StreamGenerationConfig": {
-          "MaxStreamLength": 15
         }
-      }
+      ]
+    },
+    {
+      "name": "3-Groundwater",
+      "displayName": "Groundwater",
+      "options": [
+        {
+          "name": "0-disabled",
+          "displayName": "Disabled",
+          "overrides": {}
+        },
+        {
+          "name": "1-enabled",
+          "displayName": "Enabled",
+          "overrides": {
+            "ExtraFeaturesConfig": {
+              "Groundwater": {
+                "Enabled": true
+              }
+            }
+          }
+        }
+      ]
     }
   ]
 }

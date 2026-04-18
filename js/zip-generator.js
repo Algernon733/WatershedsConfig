@@ -88,6 +88,11 @@ function formatValueForJson(value, type) {
                 return value.map(v => Math.round(Number(v)));
             }
             return [];
+        case 'string[]':
+            if (Array.isArray(value)) {
+                return value.map(v => String(v));
+            }
+            return [];
         default:
             return value;
     }
@@ -101,7 +106,8 @@ function getTypeDefault(type) {
         case 'bool': return false;
         case 'string': return '';
         case 'float[]':
-        case 'int[]': return [];
+        case 'int[]':
+        case 'string[]': return [];
         default: return null;
     }
 }

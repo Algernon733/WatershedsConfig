@@ -5,7 +5,8 @@ let configMetadata = null;
 let configManifest = null;
 let currentValues = {};
 let defaultValues = {};
-let presetsData = [];
+let presetCategories = [];
+let categorySelections = {};
 
 async function init() {
     const loadingEl = document.getElementById('loading');
@@ -31,37 +32,60 @@ async function init() {
         configMetadata = await metadataResponse.json();
         configManifest = await manifestResponse.json();
 
-        presetsData = configMetadata.presets || [];
+        presetCategories = configMetadata.presetCategories || [];
+
+        // Clean up old single-preset localStorage key
+        localStorage.removeItem('selectedPreset');
 
         // Initialize base defaults from metadata
         initializeDefaults();
 
-        // Restore and apply the saved preset
-        const savedPreset = localStorage.getItem('selectedPreset') || 'default';
-        if (savedPreset !== 'default') {
-            const preset = presetsData.find(p => p.name === savedPreset);
-            if (preset) {
-                applyPresetOverrides(preset.overrides, defaultValues);
-                applyPresetOverrides(preset.overrides, currentValues);
-            } else {
-                // Saved preset no longer exists; reset to default
-                localStorage.removeItem('selectedPreset');
+        // Restore saved selections per category and apply all overrides
+        presetCategories.forEach(category => {
+            const saved = localStorage.getItem(`preset_${category.name}`) || 'default';
+            const option = category.options.find(o => o.name === saved);
+            categorySelections[category.name] = option ? saved : 'default';
+            if (!option && saved !== 'default') {
+                localStorage.removeItem(`preset_${category.name}`);
             }
-        }
+        });
+        applyAllCategoryOverrides(defaultValues);
+        applyAllCategoryOverrides(currentValues);
 
-        // Populate preset dropdown and show it if there are presets
+        // Build preset category dropdowns
         const presetBar = document.getElementById('preset-bar');
-        const presetSelect = document.getElementById('preset-select');
-        if (presetsData.length > 0) {
-            presetsData.forEach(preset => {
-                const option = document.createElement('option');
-                option.value = preset.name;
-                option.textContent = preset.displayName;
-                presetSelect.appendChild(option);
+        if (presetCategories.length > 0) {
+            presetCategories.forEach(category => {
+                const row = document.createElement('div');
+                row.className = 'preset-row';
+
+                const label = document.createElement('label');
+                label.textContent = category.displayName + ':';
+                row.appendChild(label);
+
+                const select = document.createElement('select');
+                select.className = 'preset-select';
+                select.dataset.category = category.name;
+                select.autocomplete = 'off';
+
+                const defaultOpt = document.createElement('option');
+                defaultOpt.value = 'default';
+                defaultOpt.textContent = 'Default';
+                select.appendChild(defaultOpt);
+
+                category.options.forEach(option => {
+                    const opt = document.createElement('option');
+                    opt.value = option.name;
+                    opt.textContent = option.displayName;
+                    select.appendChild(opt);
+                });
+
+                select.value = categorySelections[category.name];
+                select.addEventListener('change', e => switchCategory(category.name, e.target.value));
+                row.appendChild(select);
+
+                presetBar.appendChild(row);
             });
-            presetSelect.value = savedPreset !== 'default' && presetsData.find(p => p.name === savedPreset)
-                ? savedPreset
-                : 'default';
             presetBar.style.display = 'flex';
         }
 
@@ -97,7 +121,6 @@ async function init() {
         document.getElementById('reset-all').addEventListener('click', resetAll);
         document.getElementById('download-config').addEventListener('click', downloadConfig);
         showAdvancedCheckbox.addEventListener('change', toggleAdvancedSettings);
-        presetSelect.addEventListener('change', e => switchPreset(e.target.value));
 
     } catch (error) {
         console.error('Initialization error:', error);
@@ -152,20 +175,26 @@ function applyPresetOverrides(overrides, targetValues) {
     }
 }
 
-function switchPreset(presetName) {
-    localStorage.setItem('selectedPreset', presetName);
-
-    // Reset to base defaults
-    initializeDefaults();
-
-    // Apply preset overrides on top
-    if (presetName !== 'default') {
-        const preset = presetsData.find(p => p.name === presetName);
-        if (preset) {
-            applyPresetOverrides(preset.overrides, defaultValues);
-            applyPresetOverrides(preset.overrides, currentValues);
+function applyAllCategoryOverrides(targetValues) {
+    presetCategories.forEach(category => {
+        const selectedName = categorySelections[category.name];
+        if (selectedName && selectedName !== 'default') {
+            const option = category.options.find(o => o.name === selectedName);
+            if (option) {
+                applyPresetOverrides(option.overrides, targetValues);
+            }
         }
-    }
+    });
+}
+
+function switchCategory(categoryName, optionName) {
+    categorySelections[categoryName] = optionName;
+    localStorage.setItem(`preset_${categoryName}`, optionName);
+
+    // Reset to base defaults then apply all category selections
+    initializeDefaults();
+    applyAllCategoryOverrides(defaultValues);
+    applyAllCategoryOverrides(currentValues);
 
     // Update all inputs in place
     syncAllInputs();
@@ -178,16 +207,20 @@ function syncAllInputs() {
                 prop.nestedProperties.forEach(nestedProp => {
                     const value = currentValues[config.className][prop.name]?.[nestedProp.name];
                     const propPath = `${prop.name}.${nestedProp.name}`;
-                    if (Array.isArray(value)) {
+                    if (Array.isArray(value) && nestedProp.type !== 'string[]') {
                         value.forEach((item, index) => syncArrayInputAtIndex(config.className, propPath, index, item));
+                    } else if (nestedProp.type === 'string[]' && Array.isArray(value)) {
+                        syncInputs(config.className, propPath, value.join('\n'));
                     } else {
                         syncInputs(config.className, propPath, value);
                     }
                 });
             } else {
                 const value = currentValues[config.className][prop.name];
-                if (Array.isArray(value)) {
+                if (Array.isArray(value) && prop.type !== 'string[]') {
                     value.forEach((item, index) => syncArrayInputAtIndex(config.className, prop.name, index, item));
+                } else if (prop.type === 'string[]' && Array.isArray(value)) {
+                    syncInputs(config.className, prop.name, value.join('\n'));
                 } else {
                     syncInputs(config.className, prop.name, value);
                 }

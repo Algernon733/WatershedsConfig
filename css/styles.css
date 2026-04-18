@@ -749,8 +749,9 @@ body.show-advanced .advanced-warning {
 
 /* Preset selector bar */
 #preset-bar {
-    align-items: center;
-    gap: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
     margin-bottom: 16px;
     padding: 10px 16px;
     background: var(--bg-secondary);
@@ -758,13 +759,26 @@ body.show-advanced .advanced-warning {
     border-radius: 4px;
 }
 
-#preset-bar label {
+.preset-header {
+    margin: 0 0 4px 0;
+    font-size: 1.1em;
+    color: var(--text-primary);
+}
+
+.preset-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.preset-row label {
     font-weight: 600;
     color: var(--text-primary);
     white-space: nowrap;
+    min-width: 180px;
 }
 
-#preset-select {
+.preset-select {
     padding: 6px 10px;
     border: 1px solid var(--border-input);
     border-radius: 4px;
@@ -772,6 +786,7 @@ body.show-advanced .advanced-warning {
     color: var(--text-primary);
     font-size: 0.95em;
     cursor: pointer;
+    flex: 1;
 }
 
 #reset-all:hover {
