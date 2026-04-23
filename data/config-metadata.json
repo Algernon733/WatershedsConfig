@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-18T22:12:30.388066Z",
+  "generatedAt": "2026-04-23T00:21:11.7498526Z",
   "configs": [
     {
       "fileName": "TerrainAnalysisConfig.json",
@@ -3496,7 +3496,7 @@
           "jsonPropertyName": "DistanceFalloffStart",
           "type": "float",
           "defaultValue": 4,
-          "description": "Volume starts falling off at this distance from the stream water",
+          "description": "Volume starts falling off at this distance (in blocks) from the stream water",
           "isNested": false
         },
         {
@@ -3504,7 +3504,7 @@
           "jsonPropertyName": "DistanceFalloffEnd",
           "type": "float",
           "defaultValue": 12,
-          "description": "Volume is 0 at this distance away from the stream, and gets louder as you get closer.",
+          "description": "Volume is 0 at this distance (in blocks) away from the stream, and gets louder as you get closer.",
           "isNested": false
         }
       ]
