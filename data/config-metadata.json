@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-23T00:21:11.7498526Z",
+  "generatedAt": "2026-04-23T08:08:48.6555561Z",
   "configs": [
     {
       "fileName": "TerrainAnalysisConfig.json",
@@ -3463,7 +3463,7 @@
           "name": "MaxVolume",
           "jsonPropertyName": "MaxVolume",
           "type": "float",
-          "defaultValue": 0.5,
+          "defaultValue": 0.2,
           "description": "Volume of stream sounds at or inside DistanceFalloffStart.\u003Cbr\u003E0.0 is no sound, 1.0 is full volume.",
           "isNested": false
         },
