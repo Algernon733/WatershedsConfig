@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-23T08:08:48.6555561Z",
+  "generatedAt": "2026-05-06T06:23:24.6884936Z",
   "configs": [
     {
       "fileName": "TerrainAnalysisConfig.json",
@@ -570,7 +570,7 @@
               "name": "StreamLengthScalarPower",
               "jsonPropertyName": "StreamLengthScalarPower",
               "type": "float",
-              "defaultValue": 1.5,
+              "defaultValue": 1,
               "description": "Power curve applied to the stream length scalar when calculating stream map noise intensity.\u003Cbr\u003E1.0 gives linear scaling with the stream length, over 1.0 gives longer streams exponentially more noise.",
               "isNested": false
             }
@@ -1786,7 +1786,7 @@
               "name": "CoastalMaxLowering",
               "jsonPropertyName": "CoastalMaxLowering",
               "type": "float",
-              "defaultValue": 3,
+              "defaultValue": 1,
               "description": "Maximum height lowering in blocks for coastal terrain near the ocean.\u003Cbr\u003ECombined with InlandMaxRaising, this creates coastal lowland/beach/marshy areas and higher inland areas.",
               "isNested": false
             },
