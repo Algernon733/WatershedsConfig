@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-06T06:23:24.6884936Z",
+  "generatedAt": "2026-05-07T19:18:28.5923674Z",
   "configs": [
     {
       "fileName": "TerrainAnalysisConfig.json",
@@ -457,7 +457,7 @@
           "name": "StreamConflictChainDepth",
           "jsonPropertyName": "StreamConflictChainDepth",
           "type": "int",
-          "defaultValue": 6,
+          "defaultValue": 4,
           "description": "Maximum depth for resolving chains of conflicting streams.\u003Cbr\u003EThis chain is when a stream gets overridden by a stronger stream that gets overridden by a stronger stream and so on.\u003Cbr\u003EDoesn\u0027t really happen much at low world heights and rough terrain.\u003Cbr\u003EBreaks determinism in the worst case, but its so rare that its better to just prevent the performance hit.\u003Cbr\u003EIf you want full determinism just set this to 9999.",
           "isNested": false
         }
