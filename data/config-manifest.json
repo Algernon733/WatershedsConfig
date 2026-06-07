@@ -1234,6 +1234,17 @@
           "max": 100,
           "step": 1
         },
+        "BankToWaterSurfaceGap": {
+          "inputType": "slider",
+          "min": 0,
+          "max": 10,
+          "step": 1,
+          "images": [
+            { "src": "images/Stream Water/BankToWaterSurfaceGap0.png", "description": "Gap of 0 between bank and water" },
+            { "src": "images/Stream Water/BankToWaterSurfaceGap1.png", "description": "Gap of 1 between bank and water" },
+            { "src": "images/Stream Water/BankToWaterSurfaceGap2.png", "description": "Gap of 2 between bank and water" }
+          ]
+        },
         "PercentOfStreamBedAsCoreArea": {
           "advanced": true,
           "inputType": "slider",

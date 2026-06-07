@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-07T19:18:28.5923674Z",
+  "generatedAt": "2026-06-05T04:11:16.2799622Z",
   "configs": [
     {
       "fileName": "TerrainAnalysisConfig.json",
@@ -1585,7 +1585,15 @@
           "jsonPropertyName": "WaterAboveStreamBedMaximum",
           "type": "int",
           "defaultValue": 30,
-          "description": "Maximum water height above the stream bed.\u003Cbr\u003EIts still capped by the heights of the stream banks, so you can\u0027t make it go super high.\u003Cbr\u003EYou can lower this to make the river water shallower, or higher if you make the rivers larger and deeper to make the water still reach the banks.",
+          "description": "Maximum water height above the stream bed.\u003Cbr\u003EIts still capped by the heights of the stream banks, so you can\u0027t make it go super high.\u003Cbr\u003EYou can lower this to make the river water shallower, or higher if you make the rivers larger and deeper to make the water still reach the banks.\u003Cbr\u003EDepreciated by BankToWaterSurfaceGap, use that instead.",
+          "isNested": false
+        },
+        {
+          "name": "BankToWaterSurfaceGap",
+          "jsonPropertyName": "BankToWaterSurfaceGap",
+          "type": "int",
+          "defaultValue": 1,
+          "description": "Block gap between the stream bank height and the stream water surface.\u003Cbr\u003EThis is pretty much what WaterAboveStreamBedMaximum used to be before I added bank sampling, so use this instead now.",
           "isNested": false
         },
         {
