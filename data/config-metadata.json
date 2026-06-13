@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-05T04:11:16.2799622Z",
+  "generatedAt": "2026-06-13T20:10:05.6301693Z",
   "configs": [
     {
       "fileName": "TerrainAnalysisConfig.json",
@@ -1941,6 +1941,14 @@
           "defaultValue": true,
           "description": "When enabled, stream water blocks count as flowing water for powering waterwheels.",
           "isNested": false
+        },
+        {
+          "name": "StreamWaterPowersWheelsLikeRapids",
+          "jsonPropertyName": "StreamWaterPowersWheelsLikeRapids",
+          "type": "bool",
+          "defaultValue": false,
+          "description": "When false, the waterwheels have weak power on the sources/thin areas of streams, and have more power near the stream mouths/wide areas.\u003Cbr\u003EWhen this is true, all stream water powers wheels at the same power as rapids.\u003Cbr\u003EThe rapids are still the best, by default they spawn on waterfalls (determined by another config).",
+          "isNested": false
         }
       ]
     },
@@ -3693,6 +3701,26 @@
               "Groundwater": {
                 "Enabled": true
               }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4-Waterwheels",
+      "displayName": "Waterwheels",
+      "options": [
+        {
+          "name": "0-default",
+          "displayName": "Default - rapids are best, weak power where the stream is thin, strong where its wide",
+          "overrides": {}
+        },
+        {
+          "name": "1-rapidsEverywhere",
+          "displayName": "All stream water is as powerful as rapids",
+          "overrides": {
+            "ExtraFeaturesConfig": {
+              "StreamWaterPowersWheelsLikeRapids": true
             }
           }
         }
