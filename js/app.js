@@ -96,18 +96,18 @@ async function init() {
         // Sort configs by order from manifest
         const sortedConfigs = configMetadata.configs
             .filter(config => {
-                const manifestConfig = configManifest.configs[config.className];
+                const manifestConfig = getManifestConfig(config);
                 return manifestConfig && manifestConfig.visible !== false;
             })
             .sort((a, b) => {
-                const orderA = configManifest.configs[a.className]?.order ?? 999;
-                const orderB = configManifest.configs[b.className]?.order ?? 999;
+                const orderA = getManifestConfig(a)?.order ?? 999;
+                const orderB = getManifestConfig(b)?.order ?? 999;
                 return orderA - orderB;
             });
 
         // Render each config section
         sortedConfigs.forEach(config => {
-            const manifestConfig = configManifest.configs[config.className] || {};
+            const manifestConfig = getManifestConfig(config) || {};
             const section = renderConfigSection(config, manifestConfig, currentValues, onValueChange);
             containerEl.appendChild(section);
         });
@@ -128,6 +128,16 @@ async function init() {
         errorEl.style.display = 'block';
         errorEl.textContent = `Error loading configuration: ${error.message}`;
     }
+}
+
+function getManifestConfig(config) {
+    const direct = configManifest.configs[config.className];
+    if (direct) return direct;
+    if (config.baseClassName) {
+        const base = configManifest.configs[config.baseClassName];
+        if (base) return { ...base, displayName: config.displayName };
+    }
+    return null;
 }
 
 function initializeDefaults() {

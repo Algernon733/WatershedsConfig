@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-13T20:10:05.6301693Z",
+  "generatedAt": "2026-08-08T22:42:22.9308443Z",
   "configs": [
     {
       "fileName": "TerrainAnalysisConfig.json",
@@ -27,24 +27,32 @@
           "name": "LargeChunkRoughnessThreshold",
           "jsonPropertyName": "LargeChunkRoughnessThreshold",
           "type": "float",
-          "defaultValue": 1.5,
+          "defaultValue": 3,
           "description": "RMSE in blocks (Root Mean Squared Error) for large-scale streams (64x64 chunks).\u003Cbr\u003ERMSE measures how much terrain deviates from a smooth plane.\u003Cbr\u003ESteep but consistent slopes have low RMSE, bumpy terrain with many ups and downs have high RMSE.\u003Cbr\u003ELarge streams are lower resolution so they need smoother terrain than small streams.\u003Cbr\u003EIncrease this to allow large scale streams on bumpier terrain.",
+          "isNested": false
+        },
+        {
+          "name": "MassiveChunkRoughnessThreshold",
+          "jsonPropertyName": "MassiveChunkRoughnessThreshold",
+          "type": "float",
+          "defaultValue": 4,
+          "description": "Same deal just for the massive scale streams (128x128)",
           "isNested": false
         }
       ]
     },
     {
-      "fileName": "TerrainErosionConfig.json",
-      "className": "TerrainErosionConfig",
-      "displayName": "Terrain Erosion",
-      "description": "Settings for the terrain erosion noise filter.\u003Cbr\u003EErosion creates branching gullies and ridges on the terrain.\u003Cbr\u003ETaken from Runevision\u0027s erosion filter: https://blog.runevision.com/2026/03/fast-and-gorgeous-erosion-filter.html",
+      "fileName": "RidgeGullyErosionFilterConfig.json",
+      "className": "RidgeGullyErosionFilterConfig",
+      "displayName": "Ridge Gully Erosion Filter",
+      "description": "Settings for the Ridge Gully Erosion Filter.\u003Cbr\u003EThis erosion filter creates branching gullies and ridges on the terrain.\u003Cbr\u003ETaken from Runevision\u0027s erosion filter: https://blog.runevision.com/2026/03/fast-and-gorgeous-erosion-filter.html",
       "properties": [
         {
           "name": "Enabled",
           "jsonPropertyName": "Enabled",
           "type": "bool",
-          "defaultValue": false,
-          "description": "Whether this erosion noise filter is used or not.",
+          "defaultValue": true,
+          "description": "Whether the Ridge Gully Erosion Filter is used or not.",
           "isNested": false
         },
         {
@@ -60,7 +68,7 @@
           "jsonPropertyName": "SlopeResolution",
           "type": "int",
           "defaultValue": 8,
-          "description": "The size of the chunks, defined in blocks squared (so 8 gives a 8x8 chunk) which are used to create sampled terrain slopes for the erosion filter.\u003Cbr\u003EIt can do these resolutions: 2 4 8 16 32 64",
+          "description": "The size of the chunks, defined in blocks squared (so 8 gives a 8x8 chunk) which are used to create sampled terrain slopes for the Ridge Gully Erosion Filter.\u003Cbr\u003EIt can do these resolutions: 2 4 8 16 32 64",
           "isNested": false
         },
         {
@@ -76,7 +84,7 @@
           "jsonPropertyName": "OctaveCount",
           "type": "int",
           "defaultValue": 3,
-          "description": "Number of octaves of the terrain erosion stripes. Works just like noise octaves where each successive octave is a smaller version of the previous.\u003Cbr\u003EMore octaves give more complex erosion patterns.",
+          "description": "Number of octaves of the Ridge Gully Erosion Filter stripes. Works just like noise octaves where each successive octave is a smaller version of the previous.\u003Cbr\u003EMore octaves give more complex erosion patterns.",
           "isNested": false
         },
         {
@@ -251,7 +259,7 @@
           "name": "DrainChunkDetectionSensitivity",
           "jsonPropertyName": "DrainChunkDetectionSensitivity",
           "type": "int",
-          "defaultValue": 1,
+          "defaultValue": 2,
           "description": "How many blocks a chunk\u0027s average sample height can be below sea level (or above if negative) to consider the chunk a possible drain for a stream.\u003Cbr\u003EHigher values mean less drain chunks, so streams only start in deeper water, but streams will start further into a basin which can look terrible.\u003Cbr\u003ELower or negative values mean more drain chunks, so streams will start closer to shore, but rivers could also drain to shallows or even into flat ground, which also looks terrible.\u003Cbr\u003EIf you adjust this, make sure you also adjust the stream mouth fade configs to match.",
           "isNested": false
         },
@@ -272,6 +280,14 @@
           "isNested": false
         },
         {
+          "name": "MassiveNumberOfDrainChunksWithinDrainAreaForStream",
+          "jsonPropertyName": "MassiveNumberOfDrainChunksWithinDrainAreaForStream",
+          "type": "int",
+          "defaultValue": 4,
+          "description": "NumberOfDrainChunksWithinDrainAreaForStream except for massive-scale streams (128x128 size chunks).",
+          "isNested": false
+        },
+        {
           "name": "FlowStageIterationsPerChunk",
           "jsonPropertyName": "FlowStageIterationsPerChunk",
           "type": "int",
@@ -283,7 +299,7 @@
           "name": "MinimumSlopeMagnitudeForDirectionalInflow",
           "jsonPropertyName": "MinimumSlopeMagnitudeForDirectionalInflow",
           "type": "float",
-          "defaultValue": 1,
+          "defaultValue": 1.75,
           "description": "Minimum slope magnitude threshold for inflow to consider the slope vector\u0027s direction.\u003Cbr\u003EChunk slope vectors under this value are treated as flat and streams pathing through it can move to any adjacent direction.\u003Cbr\u003EToo low means that less streams form on flat areas, too high means that streams ignore terrain and more often path over terrain that slopes the wrong way.",
           "isNested": false
         }
@@ -299,16 +315,24 @@
           "name": "MaxStreamLength",
           "jsonPropertyName": "MaxStreamLength",
           "type": "int",
-          "defaultValue": 11,
-          "description": "The primary setting for performance.\u003Cbr\u003EMaximum possible length for a stream in small (32x32) and large (64x64) chunks.\u003Cbr\u003EA 10 chunk long stream would be 640 blocks long if it is a large scale stream, and 320 blocks long if it is small scale.\u003Cbr\u003EThe size of the watershed model that generates around you increases exponentially with the max stream length.\u003Cbr\u003EA max length below 10 will have world generation speed at almost the same speed as basegame.\u003Cbr\u003EA max length above 20 will leave you waiting for chunks to generate.\u003Cbr\u003EThis also has diminishing returns on what you get, as terrain that can support long rivers is rare unless you scale up the terrain in the basegame\u0027s world settings.\u003Cbr\u003ELarge scale streams with a max stream length of 15 chunks will cover almost all stream-suitable slope paths you\u0027ll find. At that length on a good CPU \u0026 render distance you could continually travel without catching up to generating chunks.\u003Cbr\u003EIf you want a max length above 15 make sure you have a good CPU or you\u0027re playing on a dedicated server.\u003Cbr\u003EGets pretty crazy above stream length 21, later i\u0027ll make a preset for very long streams.",
+          "defaultValue": 8,
+          "description": "The primary setting for performance.\u003Cbr\u003E\u003Cbr\u003EMaximum possible length for a stream in small (32x32), large (64x64), and massive (128x128) chunks.\u003Cbr\u003EThis is locked in when you start your world, you can\u0027t change it on the same save.\u003Cbr\u003EA 10 chunk long stream would be 640 blocks long if it is a large scale stream, and 320 blocks long if it is small scale.\u003Cbr\u003EThe size of the watershed model that generates around you increases exponentially with the max stream length.\u003Cbr\u003EA max length below 10 will have world generation speed at almost the same speed as basegame.\u003Cbr\u003EA max length above 20 will leave you waiting for chunks to generate.\u003Cbr\u003EThis also has diminishing returns on what you get, as terrain that can support long rivers is rare unless you scale up the terrain in the basegame\u0027s world settings.\u003Cbr\u003ELarge scale streams with a max stream length of 15 chunks will cover almost all stream-suitable slope paths you\u0027ll find. At that length on a good CPU \u0026 render distance you could continually travel without catching up to generating chunks.\u003Cbr\u003EIf you want a max length above 15 make sure you have a good CPU or you\u0027re playing on a dedicated server.\u003Cbr\u003EGets pretty crazy above stream length 21, later i\u0027ll make a preset for very long streams.",
+          "isNested": false
+        },
+        {
+          "name": "MassiveStreamsEnabled",
+          "jsonPropertyName": "MassiveStreamsEnabled",
+          "type": "bool",
+          "defaultValue": false,
+          "description": "Enable massive streams, which are streams at the 128x128 chunk scale.\u003Cbr\u003ELarge are 64x64, and small are 32x32.\u003Cbr\u003EThis will increase the watershed model\u0027s generation time roughly by a third, and then even more from the extra streams pathing out of the massive streams.\u003Cbr\u003EThese massive streams are comparible to the river\u0027s mods rivers. If the terrain and max stream length is right they could even reach the same length. But with how terrain usually is, they\u0027re usually below half of river\u0027s length",
           "isNested": false
         },
         {
           "name": "MinStreamLength",
           "jsonPropertyName": "MinStreamLength",
           "type": "int",
-          "defaultValue": 7,
-          "description": "Minimum stream length in small (32x32) and large (64x64) chunks. Streams shorter than this are discarded.",
+          "defaultValue": 5,
+          "description": "Minimum stream length in small (32x32), large (64x64), and massive (128x128) chunks. Streams shorter than this are discarded.",
           "isNested": false
         },
         {
@@ -328,95 +352,87 @@
           "isNested": false
         },
         {
+          "name": "OceanDrainDetectionRadius",
+          "jsonPropertyName": "OceanDrainDetectionRadius",
+          "type": "int",
+          "defaultValue": 128,
+          "description": "If the stream\u0027s drain is within this block radius of any oceanmap opacity then the stream is classed as an ocean-draining stream.\u003Cbr\u003EAt the time of writing this only affects braided stream mouths, which fan out if they drain into the ocean.",
+          "isNested": false
+        },
+        {
           "name": "Tributary",
           "jsonPropertyName": "Tributary",
           "type": "nested",
           "defaultValue": null,
-          "description": "Configuration for tributary generation including minimum length, merge behavior, and pathing options.",
+          "description": null,
           "isNested": true,
           "nestedClassName": "TributaryConfig",
           "nestedProperties": [
             {
-              "name": "MinimumLength",
-              "jsonPropertyName": "MinimumLength",
-              "type": "int",
-              "defaultValue": 4,
-              "description": "Minimum tributary length in small (32x32) and large (64x64) chunks. Tributaries shorter than this are discarded.",
-              "isNested": false
-            },
-            {
               "name": "MergeDownstreamOffset",
               "jsonPropertyName": "MergeDownstreamOffset",
               "type": "float",
-              "defaultValue": 5,
-              "description": "How far tributaries curve downstream the main stream when joining the main stream.\u003Cbr\u003EThe unit for this is curve points, the spacing between them on a stream path is defined by \u0022Curve Point Spacing\u0022 in Stream Mapping.",
+              "defaultValue": 15,
+              "description": "Moves the tributaries\u0027 connection point downstream the parent stream by this many blocks.\u003Cbr\u003EIRL tributaries curve downstream a little, but not that much.",
               "isNested": false
             },
             {
-              "name": "MainStreamProximityThreshold",
-              "jsonPropertyName": "MainStreamProximityThreshold",
+              "name": "ParentProximityThreshold",
+              "jsonPropertyName": "ParentProximityThreshold",
               "type": "float",
-              "defaultValue": 7,
-              "description": "Distance threshold (multiplier on tributary width at each curve point) from the main stream for deciding when to truncate tributaries that get too close to the main stream, and reconnecting them at the conflict/intersection.",
+              "defaultValue": 5,
+              "description": "Like the oxbow cutoff threshold, but for when tributaries get too close to the parent stream.\u003Cbr\u003EThe tributary gets cut off and reattached if it gets closer than this threshold * bed width at the close streampath curve point.",
               "isNested": false
             },
             {
-              "name": "EnableLookahead",
-              "jsonPropertyName": "EnableLookahead",
-              "type": "bool",
-              "defaultValue": true,
-              "description": "Whether tributaries use lookahead pathing over greedy pathing.",
+              "name": "MouthFadeOffset",
+              "jsonPropertyName": "MouthFadeOffset",
+              "type": "float",
+              "defaultValue": 25,
+              "description": "How far away the fade circle is from the stream mouth at the connection to the parent stream.\u003Cbr\u003EJust like with connections to drains and connections to the rivers mod\u0027s rivers, it uses a gradient circle to fade out the stream mouth into the parent stream.",
+              "isNested": false
+            },
+            {
+              "name": "MouthFadeRadius",
+              "jsonPropertyName": "MouthFadeRadius",
+              "type": "float",
+              "defaultValue": 50,
+              "description": "How wide the fade circle is.",
               "isNested": false
             }
           ]
         },
         {
-          "name": "BendPool",
-          "jsonPropertyName": "BendPool",
+          "name": "CurvePointSpacing",
+          "jsonPropertyName": "CurvePointSpacing",
+          "type": "float",
+          "defaultValue": 1,
+          "description": "Spacing between curve points along the stream path in blocks.\u003Cbr\u003EBasically defines the resolution of the line the streams follow (the stream path).\u003Cbr\u003EIt used to be fully accurate to blocks when stream maps were 1 pixel to 1 block, but 1:1 ratio is now affected by large scale rivers and the stream map resolution (BlockColumnsPerPixel).\u003Cbr\u003ELower means more points and a higher resolution. Higher means fewer points and a lower resolution.\u003Cbr\u003ETest any changes you make to this against the stream maps, don\u0027t change it blind.",
+          "isNested": false
+        },
+        {
+          "name": "DrainFade",
+          "jsonPropertyName": "DrainFade",
           "type": "nested",
           "defaultValue": null,
-          "description": "Configuration for bend pool effect where curved sections of streams are carved deeper, creating pools.",
+          "description": "Configuration for fading out the stream as it approaches a drain.",
           "isNested": true,
-          "nestedClassName": "BendPoolConfig",
+          "nestedClassName": "DrainFadeConfig",
           "nestedProperties": [
             {
-              "name": "Enabled",
-              "jsonPropertyName": "Enabled",
-              "type": "bool",
-              "defaultValue": true,
-              "description": "Enable bend pool effect. Curved sections of streams are carved deeper, creating pools.",
-              "isNested": false
-            },
-            {
-              "name": "MaxDepthBoost",
-              "jsonPropertyName": "MaxDepthBoost",
+              "name": "DrainFadeOffset",
+              "jsonPropertyName": "DrainFadeOffset",
               "type": "float",
-              "defaultValue": 8,
-              "description": "Maximum extra block depth that gets carved in curved stream sections.\u003Cbr\u003EStraight sections get no extra depth. The boost is scaled by the magnitude of the stream\u0027s curvature in each area.\u003Cbr\u003E3.0 means the most curved sections can be up to 3 blocks deeper than normal.",
+              "defaultValue": 110,
+              "description": "How far away the fade circle is from the stream mouth.\u003Cbr\u003EUses a gradient circle to fade out the stream mouth into the drain.\u003Cbr\u003EBasically a simple fadeout of the stream as it gets to the water.",
               "isNested": false
             },
             {
-              "name": "CurvatureThreshold",
-              "jsonPropertyName": "CurvatureThreshold",
+              "name": "DrainFadeRadius",
+              "jsonPropertyName": "DrainFadeRadius",
               "type": "float",
-              "defaultValue": 0.06,
-              "description": "Curvature magnitude threshold for determining if a section of a stream is curving.\u003Cbr\u003EThis is used to create pools in curved areas.\u003Cbr\u003EValues above this threshold are considered curved, below are straight.\u003Cbr\u003ELower values make more areas of the stream count as curved, which makes bigger and longer pools at the stream\u0027s curves.",
-              "isNested": false
-            },
-            {
-              "name": "SmoothingWindow",
-              "jsonPropertyName": "SmoothingWindow",
-              "type": "int",
-              "defaultValue": 20,
-              "description": "Number of curve points to average out when smoothing curvature for the bend pools.\u003Cbr\u003EAlso softens out outlier/tiny bumps so you don\u0027t get pools in straight areas.",
-              "isNested": false
-            },
-            {
-              "name": "LookAroundDistance",
-              "jsonPropertyName": "LookAroundDistance",
-              "type": "int",
-              "defaultValue": 16,
-              "description": "Number of curve points to look ahead/behind when calculating curvature.\u003Cbr\u003EA higher LookAroundDistance detects bigger curves, and lower detects tighter local bends.",
+              "defaultValue": 130,
+              "description": "How big the fade circle is.\u003Cbr\u003EUses a gradient circle to fade out the stream mouth into the drain.\u003Cbr\u003EBasically a simple fadeout of the stream as it gets to the water.",
               "isNested": false
             }
           ]
@@ -464,192 +480,26 @@
       ]
     },
     {
-      "fileName": "StreamMapConfig.json",
-      "className": "StreamMapConfig",
-      "displayName": "Stream Map",
-      "description": "Settings for how the streams are drawn on the stream maps.",
+      "fileName": "StreamNoiseAndCarvingConfig.json",
+      "className": "StreamNoiseAndCarvingConfig",
+      "displayName": "Stream Noise And Carving",
+      "description": "Noise and carving settings for all stream types.",
       "properties": [
         {
-          "name": "MaxHeightRangeForNoiseFadeOut",
-          "jsonPropertyName": "MaxHeightRangeForNoiseFadeOut",
-          "type": "float",
-          "defaultValue": 16,
-          "description": "The terrain height range (in blocks) at which stream shape noise completely fades out.\u003Cbr\u003ELower means smoother more bezier-like streams in rough terrain.\u003Cbr\u003EOnly applies to straight streams, meandering and braided streams don\u0027t use shape noise.",
-          "isNested": false
-        },
-        {
-          "name": "ConnectionPointNoiseFadeDistanceInBezierPoints",
-          "jsonPropertyName": "ConnectionPointNoiseFadeDistanceInBezierPoints",
-          "type": "int",
-          "defaultValue": 100,
-          "description": "Distance (in curve points) from connection points where noise fades from 0 to normal.\u003Cbr\u003EConnection points are the drain for main streams, and the main stream connection for tributaries.\u003Cbr\u003EConnection points have 0 noise to prevent the stream from being misaligned with the connection.",
-          "isNested": false
-        },
-        {
-          "name": "SmallStreamMapBlockColumnsPerPixel",
-          "jsonPropertyName": "SmallStreamMapBlockColumnsPerPixel",
-          "type": "int",
-          "defaultValue": 2,
-          "description": "Number of block columns represented by a single pixel in small-scale stream maps.\u003Cbr\u003EA higher value means a lower resolution with better performance but less detail.\u003Cbr\u003E4 = one pixel represents a 4x4 block area,\u003Cbr\u003E1 = one pixel per block column.\u003Cbr\u003EPut it at 1 or 2. 1 means the stream maps take a long time to generate. 2 means the stream maps generate fast, but they\u0027re a little more rough.",
-          "isNested": false
-        },
-        {
-          "name": "LargeStreamMapBlockColumnsPerPixel",
-          "jsonPropertyName": "LargeStreamMapBlockColumnsPerPixel",
-          "type": "int",
-          "defaultValue": 2,
-          "description": "Number of block columns represented by a single pixel in large-scale stream maps.\u003Cbr\u003EA higher value means a lower resolution with better performance but less detail.\u003Cbr\u003E4 = one pixel represents a 4x4 block area,\u003Cbr\u003E1 = one pixel per block column.\u003Cbr\u003EPut it at 1 or 2. 1 means the stream maps take a long time to generate. 2 means the stream maps generate fast, but they\u0027re a little more rough.",
-          "isNested": false
-        },
-        {
-          "name": "CurvePointSpacing",
-          "jsonPropertyName": "CurvePointSpacing",
-          "type": "float",
-          "defaultValue": 1,
-          "description": "Spacing between curve points along the stream path in blocks.\u003Cbr\u003EBasically defines the resolution of the line the streams follow (the stream path).\u003Cbr\u003EIt used to be fully accurate to blocks when stream maps were 1 pixel to 1 block, but 1:1 ratio is now affected by large scale rivers and the stream map resolution (BlockColumnsPerPixel).\u003Cbr\u003ELower means more points and a higher resolution. Higher means fewer points and a lower resolution.\u003Cbr\u003ETest any changes you make to this against the stream maps, don\u0027t change it blind.",
-          "isNested": false
-        },
-        {
-          "name": "StreamShapeNoise",
-          "jsonPropertyName": "StreamShapeNoise",
+          "name": "MoundCanyoning",
+          "jsonPropertyName": "MoundCanyoning",
           "type": "nested",
           "defaultValue": null,
-          "description": "Defines noise parameters for natural wobbling of the stream shape on the stream maps.\u003Cbr\u003EThis only gets applied to straight rivers. Meandering and braided rivers use an iterative meandering technique to change their shape.\u003Cbr\u003EIf you edit this enough you can get cheap meandering, but the best results come from more expensive iterative methods.\u003Cbr\u003EYou can get good small/minor meander-like curves using this as well.",
+          "description": "Configuration for canyoning terrain mounds/hills within stream areas.",
           "isNested": true,
-          "nestedClassName": "StreamMapShapeNoiseConfig",
-          "nestedProperties": [
-            {
-              "name": "NoiseScale",
-              "jsonPropertyName": "NoiseScale",
-              "type": "int",
-              "defaultValue": 80,
-              "description": "Controls the overall size of map noise based stream wobbling.\u003Cbr\u003EBasically increases the distance between each consecutive stream bend (peak/trough).",
-              "isNested": false
-            },
-            {
-              "name": "NoiseOctaves",
-              "jsonPropertyName": "NoiseOctaves",
-              "type": "int",
-              "defaultValue": 8,
-              "description": "Determines the complexity of the stream curve noise.\u003Cbr\u003ELook up perlin noise octaves to learn about this.",
-              "isNested": false
-            },
-            {
-              "name": "NoisePersistence",
-              "jsonPropertyName": "NoisePersistence",
-              "type": "float",
-              "defaultValue": 0.35,
-              "description": "Controls how quickly map noise detail diminishes across octaves.\u003Cbr\u003EFor instance: with a noise persistence of 0.2 and a noise value of 1 on the first octave, means the second octave has a noise value of 0.8.\u003Cbr\u003EMakes stream direction changes more chaotic.",
-              "isNested": false
-            },
-            {
-              "name": "NoiseLacunarity",
-              "jsonPropertyName": "NoiseLacunarity",
-              "type": "float",
-              "defaultValue": 1.25,
-              "description": "Controls the increase of frequency between the noise octaves. Makes streams more bumpy",
-              "isNested": false
-            },
-            {
-              "name": "NoiseDisplacement",
-              "jsonPropertyName": "NoiseDisplacement",
-              "type": "float",
-              "defaultValue": 300,
-              "description": "Controls the amplitude of the noise. Makes stream bends longer, stretching further away from a straight stream path.",
-              "isNested": false
-            },
-            {
-              "name": "HeightRangeScalarPower",
-              "jsonPropertyName": "HeightRangeScalarPower",
-              "type": "float",
-              "defaultValue": 1,
-              "description": "Power curve applied to the height range scalar when calculating stream map noise intensity.\u003Cbr\u003E1.0 is linear, over 1.0 gives an aggressive fade in rough terrain, and under 1.0 gives a gentle fade.",
-              "isNested": false
-            },
-            {
-              "name": "StreamLengthScalarPower",
-              "jsonPropertyName": "StreamLengthScalarPower",
-              "type": "float",
-              "defaultValue": 1,
-              "description": "Power curve applied to the stream length scalar when calculating stream map noise intensity.\u003Cbr\u003E1.0 gives linear scaling with the stream length, over 1.0 gives longer streams exponentially more noise.",
-              "isNested": false
-            }
-          ]
-        },
-        {
-          "name": "DrainFade",
-          "jsonPropertyName": "DrainFade",
-          "type": "nested",
-          "defaultValue": null,
-          "description": "Configuration for fading out the stream as it approaches a drain.",
-          "isNested": true,
-          "nestedClassName": "DrainFadeConfig",
-          "nestedProperties": [
-            {
-              "name": "DrainFadeOffset",
-              "jsonPropertyName": "DrainFadeOffset",
-              "type": "float",
-              "defaultValue": 50,
-              "description": "How far away the fade circle is from the stream mouth.\u003Cbr\u003EUses a gradient circle to fade out the stream mouth into the drain.\u003Cbr\u003EBasically a simple fadeout of the stream as it gets to the water.",
-              "isNested": false
-            },
-            {
-              "name": "DrainFadeRadius",
-              "jsonPropertyName": "DrainFadeRadius",
-              "type": "float",
-              "defaultValue": 130,
-              "description": "How big the fade circle is.\u003Cbr\u003EUses a gradient circle to fade out the stream mouth into the drain.\u003Cbr\u003EBasically a simple fadeout of the stream as it gets to the water.",
-              "isNested": false
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "fileName": "StreamNoiseConfig.json",
-      "className": "StreamNoiseConfig",
-      "displayName": "Stream Noise",
-      "description": "Noise and carving settings that define how a stream map is applied to the terrain.",
-      "properties": [
-        {
-          "name": "StreamTerrainInfluenceAtAnchor",
-          "jsonPropertyName": "StreamTerrainInfluenceAtAnchor",
-          "type": "float",
-          "defaultValue": 1,
-          "description": "Stream\u0027s terrain influence strength at the scaling anchor length.\u003Cbr\u003EMost stream properties fade in with terrain influence, so you can almost treat it as the stream opacity for most features.",
-          "isNested": false
-        },
-        {
-          "name": "StreamTerrainInfluenceAtSource",
-          "jsonPropertyName": "StreamTerrainInfluenceAtSource",
-          "type": "float",
-          "defaultValue": 0.7,
-          "description": "Stream\u0027s terrain influence strength at the source.\u003Cbr\u003EMost stream properties fade in with terrain influence, so you can almost treat it as the stream opacity for most features.",
-          "isNested": false
-        },
-        {
-          "name": "StreamWidthInterpolationPower",
-          "jsonPropertyName": "StreamWidthInterpolationPower",
-          "type": "float",
-          "defaultValue": 1,
-          "description": "Power curve for interpolating noise related features from source to mouth.\u003Cbr\u003ECurrently applies to height variation and canyon wall rockiness, may be used for more later.",
-          "isNested": false
-        },
-        {
-          "name": "MoundSuppression",
-          "jsonPropertyName": "MoundSuppression",
-          "type": "nested",
-          "defaultValue": null,
-          "description": "Configuration for suppressing terrain mounds/hills within stream areas.",
-          "isNested": true,
-          "nestedClassName": "MoundSuppressionConfig",
+          "nestedClassName": "MoundCanyoningConfig",
           "nestedProperties": [
             {
               "name": "Enabled",
               "jsonPropertyName": "Enabled",
               "type": "bool",
-              "defaultValue": true,
-              "description": "Enables suppression of terrain mounds/hills within stream areas.\u003Cbr\u003EThis is an asymmetrical noise reduction specifically set up to target small mounds that get in the way of rivers.\u003Cbr\u003EThe terrain sampling on the watershed model helps to avoid most rough terrain and bumps, but rarely some get through so this is used to carve through them.\u003Cbr\u003EIt carves canyons into the terrain a little bit, but its worth it to prevent streams from being split apart by a mound.",
+              "defaultValue": false,
+              "description": "Enables canyoning of terrain mounds/hills within stream areas.\u003Cbr\u003EThis is an asymmetrical noise reduction specifically set up to target small mounds that get in the way of rivers.\u003Cbr\u003EThe terrain sampling on the watershed model helps to avoid most rough terrain and bumps, but rarely some get through so this is used to carve through them.\u003Cbr\u003EIt carves canyons into the terrain a little bit, but its worth it to prevent streams from being split apart by a mound.",
               "isNested": false
             },
             {
@@ -657,26 +507,26 @@
               "jsonPropertyName": "Strength",
               "type": "float",
               "defaultValue": 12,
-              "description": "Strength of mound suppression in stream areas.",
+              "description": "Strength of mound canyoning in stream areas.",
               "isNested": false
             }
           ]
         },
         {
-          "name": "LandformCarving",
-          "jsonPropertyName": "LandformCarving",
+          "name": "LandformCanyoning",
+          "jsonPropertyName": "LandformCanyoning",
           "type": "nested",
           "defaultValue": null,
-          "description": "Configuration for carving down landform hills/mounds in stream areas.",
+          "description": "Configuration for canyoning down landform hills/mounds in stream areas.",
           "isNested": true,
-          "nestedClassName": "LandformCarvingConfig",
+          "nestedClassName": "LandformCanyoningConfig",
           "nestedProperties": [
             {
               "name": "Enabled",
               "jsonPropertyName": "Enabled",
               "type": "bool",
-              "defaultValue": true,
-              "description": "Enables carving of landform features (hills/mounds) in stream areas.\u003Cbr\u003EThis is the older landform component of the mound suppression.\u003Cbr\u003EWhile the more general asymmetric noise suppression does a better job of carving down mounds, it seems landform noise still gets in the way a little bit.\u003Cbr\u003EHaven\u0027t touched this much since I got the asymmetric noise suppression working, it needs another look at some point.",
+              "defaultValue": false,
+              "description": "Enables canyoning of landform features (hills/mounds) in stream areas.\u003Cbr\u003EThis is the older landform component of the mound canyoning.\u003Cbr\u003EWhile the more general asymmetric noise canyoning does a better job of carving down mounds, it seems landform noise still gets in the way a little bit.\u003Cbr\u003EHaven\u0027t touched this much since I got the asymmetric noise canyoning working, it needs another look at some point.",
               "isNested": false
             },
             {
@@ -684,7 +534,7 @@
               "jsonPropertyName": "Strength",
               "type": "float",
               "defaultValue": 0.02,
-              "description": "Strength of landform carving in stream areas.",
+              "description": "Strength of landform canyoning in stream areas.",
               "isNested": false
             },
             {
@@ -692,7 +542,7 @@
               "jsonPropertyName": "Power",
               "type": "float",
               "defaultValue": 2,
-              "description": "Power curve for landform carving scaling.",
+              "description": "Power curve for landform canyoning scaling.",
               "isNested": false
             },
             {
@@ -700,7 +550,7 @@
               "jsonPropertyName": "UseExponential",
               "type": "bool",
               "defaultValue": true,
-              "description": "Use exponential scaling for landform carving instead of linear.",
+              "description": "Use exponential scaling for landform canyoning instead of linear.",
               "isNested": false
             }
           ]
@@ -730,9 +580,9 @@
                 0,
                 0,
                 0,
-                2,
-                1.5,
                 1,
+                0.75,
+                0.5,
                 0,
                 0,
                 0,
@@ -749,9 +599,9 @@
                 0,
                 0,
                 0,
-                2,
-                1.5,
                 1,
+                0.75,
+                0.5,
                 0,
                 0,
                 0,
@@ -871,28 +721,20 @@
           ]
         },
         {
-          "name": "SeaLevelFade",
-          "jsonPropertyName": "SeaLevelFade",
+          "name": "SeaLevelBedDepthCap",
+          "jsonPropertyName": "SeaLevelBedDepthCap",
           "type": "nested",
           "defaultValue": null,
-          "description": "Configuration for fading out stream displacement (terrain carving/erosion) near sea level.\u003Cbr\u003EThis helps to prevent deep stream carving near shallow drains.\u003Cbr\u003EIts alright at the current settings, but if you make it more aggressive and shallow it starts looking pretty rough.",
+          "description": "Caps how deep streambeds may carve below sea level near stream mouths.\u003Cbr\u003EPrevents deep streams from trenching through the sea floor.",
           "isNested": true,
-          "nestedClassName": "SeaLevelFadeConfig",
+          "nestedClassName": "SeaLevelBedDepthCapConfig",
           "nestedProperties": [
             {
-              "name": "SeaLevelFadeStartOffset",
-              "jsonPropertyName": "SeaLevelFadeStartOffset",
-              "type": "int",
-              "defaultValue": 4,
-              "description": "Blocks below sea level where stream displacement fade begins.\u003Cbr\u003EFades out the displacement (stream terrain carving/erosion) as it gets closer to the stream mouth.",
-              "isNested": false
-            },
-            {
-              "name": "SeaLevelFadeEndOffset",
-              "jsonPropertyName": "SeaLevelFadeEndOffset",
-              "type": "int",
+              "name": "TargetBedDepthBelowSeaLevel",
+              "jsonPropertyName": "TargetBedDepthBelowSeaLevel",
+              "type": "float",
               "defaultValue": 9,
-              "description": "Blocks below sea level where stream displacement fade ends.\u003Cbr\u003EFades out the displacement (stream terrain carving/erosion) as it gets closer to the stream mouth.",
+              "description": "Deepest the carved streambed is allowed to sit below sea level, in blocks.\u003Cbr\u003EStream carving is scaled down just enough that the bed bottoms out at this depth,\u003Cbr\u003Eso streams of any depth reach the same mouth depth instead of trenching into the sea floor.\u003Cbr\u003ESet very high (e.g. 9999) to disable the cap entirely.",
               "isNested": false
             }
           ]
@@ -900,16 +742,16 @@
       ]
     },
     {
-      "fileName": "MeanderingConfig.json",
+      "fileName": "Meandering/MeanderingConfig.json",
       "className": "MeanderingConfig",
       "displayName": "Meandering",
-      "description": "Settings for how meandering streams are warped into meanders on the streammap.",
+      "description": "Settings for the meandering streams.",
       "properties": [
         {
           "name": "EnabledChance",
           "jsonPropertyName": "EnabledChance",
           "type": "int",
-          "defaultValue": 0,
+          "defaultValue": 66,
           "description": "Percent chance for a stream to be a meandering stream.",
           "isNested": false
         },
@@ -926,7 +768,7 @@
           "jsonPropertyName": "SinuosityAtSource",
           "type": "float",
           "defaultValue": 1.225,
-          "description": "Sinuosity at the stream source.\u003Cbr\u003ESinuosity scales the amplitude of the meandering sine-based curves per iteration.\u003Cbr\u003EThe sinuosity lerps from the source to the anchor based on the distance along the stream.\u003Cbr\u003ESuper volatile value, completely changes how meandering works with even a tiny change.",
+          "description": "Sinuosity at the stream source.\u003Cbr\u003ESinuosity scales the amplitude of the meandering sine-based curves per iteration.\u003Cbr\u003EThe sinuosity lerps from the source to the anchor based on the distance along the stream.\u003Cbr\u003ESuper volatile value, completely changes how meandering looks with even a tiny change.",
           "isNested": false
         },
         {
@@ -934,47 +776,7 @@
           "jsonPropertyName": "SinuosityAtAnchor",
           "type": "float",
           "defaultValue": 1.225,
-          "description": "Sinuosity at the anchor point.\u003Cbr\u003EStreams longer than anchor length continue extrapolating linearly.\u003Cbr\u003E1.0 means a straight line. 1.5\u002B gives massive meandering.\u003Cbr\u003EThe sinuosity lerps from the source to the anchor based on the distance along the stream.\u003Cbr\u003ESuper volatile value, completely changes how meandering works with even a tiny change.",
-          "isNested": false
-        },
-        {
-          "name": "SinuosityScalingPower",
-          "jsonPropertyName": "SinuosityScalingPower",
-          "type": "float",
-          "defaultValue": 1,
-          "description": "Power curve applied to to the sinuosity as it goes from source to anchor.",
-          "isNested": false
-        },
-        {
-          "name": "WavelengthMultiplierAtSource",
-          "jsonPropertyName": "WavelengthMultiplierAtSource",
-          "type": "float",
-          "defaultValue": 6.6,
-          "description": "Wavelength multiplier at the stream source (thin end).\u003Cbr\u003EThe meander wavelength (meander length down the stream) at each point is the streambed width at that point multiplied by this value.\u003Cbr\u003EHigher wavelength multiplier means longer, more gradual meanders.\u003Cbr\u003ELower wavelength multiplier means tighter, more frequent bends.\u003Cbr\u003EYou can use UseConstantBeltWidthRatio (on by default) instead of this for simpler but less fine tuned meander wavelengths.",
-          "isNested": false
-        },
-        {
-          "name": "WavelengthMultiplierAtAnchor",
-          "jsonPropertyName": "WavelengthMultiplierAtAnchor",
-          "type": "float",
-          "defaultValue": 1.39,
-          "description": "Wavelength multiplier at the anchor point.\u003Cbr\u003EStreams longer than anchor length continue growing the meander wavelength linearly.\u003Cbr\u003EThe meander wavelength (meander length down the stream) at each point is the streambed width at that point multiplied by this value.\u003Cbr\u003EHigher wavelength multiplier means longer, more gradual meanders.\u003Cbr\u003ELower wavelength multiplier means tighter, more frequent bends.\u003Cbr\u003EYou can use UseConstantBeltWidthRatio (on by default) instead of this for simpler but less fine tuned meander wavelengths.",
-          "isNested": false
-        },
-        {
-          "name": "WavelengthScalingPower",
-          "jsonPropertyName": "WavelengthScalingPower",
-          "type": "float",
-          "defaultValue": 1,
-          "description": "Power curve applied to the wavelength scaling from source to anchor.",
-          "isNested": false
-        },
-        {
-          "name": "UseConstantBeltWidthRatio",
-          "jsonPropertyName": "UseConstantBeltWidthRatio",
-          "type": "bool",
-          "defaultValue": true,
-          "description": "When true, automatically calculates wavelength multipliers to maintain a constant meander belt width to stream width ratio along all positions in the river.\u003Cbr\u003EThe ratio is set by BeltWidthToStreamWidthRatio.\u003Cbr\u003EWhen false, the meandering uses the manually set WavelengthMultiplierAtSource and WavelengthMultiplierAtAnchor values instead.",
+          "description": "Sinuosity at the anchor point.\u003Cbr\u003EStreams longer than anchor length continue extrapolating linearly.\u003Cbr\u003E1.0 means a straight line. 1.5\u002B gives massive meandering.\u003Cbr\u003EThe sinuosity lerps from the source to the anchor based on the distance along the stream.\u003Cbr\u003ESuper volatile value, completely changes how meandering looks with even a tiny change.",
           "isNested": false
         },
         {
@@ -986,19 +788,11 @@
           "isNested": false
         },
         {
-          "name": "CurvatureDisplacementMultipiler",
-          "jsonPropertyName": "CurvatureDisplacementMultipiler",
-          "type": "float",
-          "defaultValue": 1,
-          "description": "Higher means stronger growth of the existing bends.",
-          "isNested": false
-        },
-        {
           "name": "MeanderFading",
           "jsonPropertyName": "MeanderFading",
           "type": "nested",
           "defaultValue": null,
-          "description": "Configuration for fading out meandering into a smooth path at the stream source and mouth, as braiding at the ends of the stream gives low quality results.",
+          "description": "Configuration for fading out meandering into a smooth path at the stream source and mouth.",
           "isNested": true,
           "nestedClassName": "MeanderFadingConfig",
           "nestedProperties": [
@@ -1011,27 +805,11 @@
               "isNested": false
             },
             {
-              "name": "SourceExponent",
-              "jsonPropertyName": "SourceExponent",
-              "type": "float",
-              "defaultValue": 0.8,
-              "description": "Power curve exponent for source fade transition.\u003Cbr\u003EThis controls how quickly the meandering fades into the straight path near the stream source.",
-              "isNested": false
-            },
-            {
               "name": "MouthDistanceAtAnchor",
               "jsonPropertyName": "MouthDistanceAtAnchor",
               "type": "float",
               "defaultValue": 250,
               "description": "Distance from the stream drain/connection (in blocks) when the stream is at the anchor\u0027s stream length, over which to fade meandering back to a straight connection.\u003Cbr\u003EThis distance scales with stream length: short streams have proportionally shorter fade distances, long streams have proportionally longer fade distances.\u003Cbr\u003EBasically, its how big the fadeout of meandering is near the stream mouth.",
-              "isNested": false
-            },
-            {
-              "name": "MouthExponent",
-              "jsonPropertyName": "MouthExponent",
-              "type": "float",
-              "defaultValue": 0.8,
-              "description": "Power curve exponent for mouth fade transition.\u003Cbr\u003EThis controls how quickly the meandering fades into the straight connection to the drain/main stream.",
               "isNested": false
             }
           ]
@@ -1084,24 +862,16 @@
               "name": "HeightThreshold",
               "jsonPropertyName": "HeightThreshold",
               "type": "float",
-              "defaultValue": 30,
+              "defaultValue": 60,
               "description": "Height difference (in blocks) at which steep terrain blending reaches full strength.\u003Cbr\u003EThe blending lerps from 0 blending at 0 height difference to the full blending strength (BlendStrength) at this configured threshold.\u003Cbr\u003EThis prevents streams from meandering the path into nearby cliffs and hills, and keeps the stream path clean on mountains.\u003Cbr\u003EUse with BlendStrength to define the relationship between terrain height and blend strength",
-              "isNested": false
-            },
-            {
-              "name": "BlendPower",
-              "jsonPropertyName": "BlendPower",
-              "type": "float",
-              "defaultValue": 2,
-              "description": "Power curve exponent for steep terrain blending. Controls how quickly blending ramps up as the nearby terrain approaches the HeightThreshold.",
               "isNested": false
             },
             {
               "name": "SearchRadius",
               "jsonPropertyName": "SearchRadius",
               "type": "int",
-              "defaultValue": 1,
-              "description": "Manhattan distance radius (in chunks) for searching neighboring terrain when calculating max height difference.\u003Cbr\u003E0 means only use the current chunk. 1 means include immediate neighbors. 2\u002B means a larger search area.\u003Cbr\u003EA larger radius catches steep/rough terrain that is further from the stream path.",
+              "defaultValue": 0,
+              "description": "Manhattan distance radius (in chunks) for searching neighboring terrain when calculating max height difference.\u003Cbr\u003E0 means only use the current chunk. 1 means include immediate neighbors. 2\u002B means a larger search area.\u003Cbr\u003EA larger radius catches steep/rough terrain that is further from the stream path.Increase it if you find streams meandering into rough terrain, otherwise leave at 0",
               "isNested": false
             }
           ]
@@ -1140,44 +910,63 @@
               "isNested": false
             }
           ]
+        },
+        {
+          "name": "DrainMovement",
+          "jsonPropertyName": "DrainMovement",
+          "type": "nested",
+          "defaultValue": null,
+          "description": "Configs for the moving the stream mouths/drain points along the coast.",
+          "isNested": true,
+          "nestedClassName": "DrainMovementConfig",
+          "nestedProperties": [
+            {
+              "name": "DrainMigrateRadius",
+              "jsonPropertyName": "DrainMigrateRadius",
+              "type": "float",
+              "defaultValue": 64,
+              "description": "The stream mouths can migrate this amount of blocks away from it\u0027s original drain mouths, if their stream mouths can migrate.\u003Cbr\u003EAt time of writing, this is for meandering and braided streams.",
+              "isNested": false
+            },
+            {
+              "name": "SlowdownInnerMigrateRadiusFraction",
+              "jsonPropertyName": "SlowdownInnerMigrateRadiusFraction",
+              "type": "float",
+              "defaultValue": 0.4,
+              "description": "This is the fraction of DrainMigrateRadius where a strream mouth can migrate before getting slowed down.",
+              "isNested": false
+            },
+            {
+              "name": "MouthStraighteningStrength",
+              "jsonPropertyName": "MouthStraighteningStrength",
+              "type": "float",
+              "defaultValue": 0.2,
+              "description": "To prevent the stream meandering around/on the stream mouth we straighten it up between the stream mouth and (the scaled) mouthFadeAtAnchor.\u003Cbr\u003E0.0 is no straightening 1.0 is full strength straightening.",
+              "isNested": false
+            }
+          ]
         }
       ]
     },
     {
-      "fileName": "BraidedConfig.json",
+      "fileName": "Braided/BraidedConfig.json",
       "className": "BraidedConfig",
       "displayName": "Braided",
-      "description": "Settings for how braided streams are warped into meanders then overlaid with multiple meandering iterations to create point bars and a braided channel effect.\u003Cbr\u003EBraided streams have its own versions of the meandering configs, so that braided streams can be adjusted separately from meandering streams.",
+      "description": "Settings for the braided streams.",
       "properties": [
         {
           "name": "EnabledChance",
           "jsonPropertyName": "EnabledChance",
           "type": "int",
-          "defaultValue": 0,
+          "defaultValue": 50,
           "description": "Percent Chance for a meandering stream to have braided streams.\u003Cbr\u003EBraided streams try to emulate what you see in this video: https://youtu.be/X5mgHu2bMvI",
-          "isNested": false
-        },
-        {
-          "name": "MinSmallScaleStreamLength",
-          "jsonPropertyName": "MinSmallScaleStreamLength",
-          "type": "int",
-          "defaultValue": 10,
-          "description": "Minimum stream length in chunks for small-scale streams to be braided instead of just meandering.\u003Cbr\u003EStreams shorter than this will meander but not braid.",
-          "isNested": false
-        },
-        {
-          "name": "MinLargeScaleStreamLength",
-          "jsonPropertyName": "MinLargeScaleStreamLength",
-          "type": "int",
-          "defaultValue": 10,
-          "description": "Minimum stream length in chunks for large-scale streams to be braided instead of just meandering.\u003Cbr\u003EStreams shorter than this will meander but not braid.",
           "isNested": false
         },
         {
           "name": "HistoricalIterations",
           "jsonPropertyName": "HistoricalIterations",
           "type": "int",
-          "defaultValue": 4,
+          "defaultValue": 3,
           "description": "Number of historical meandering iterations to render before the final.\u003Cbr\u003EEach appears at reduced opacity, creating faded historical stream channels.\u003Cbr\u003EFor example, with 5 historical iterations, opacities are: 17%, 33%, 50%, 67%, 83%, then 100% for the final path.",
           "isNested": false
         },
@@ -1185,7 +974,7 @@
           "name": "MinOpacity",
           "jsonPropertyName": "MinOpacity",
           "type": "float",
-          "defaultValue": 0.2,
+          "defaultValue": 0.35,
           "description": "Opacity for the oldest historical path.\u003Cbr\u003EOpacity scales linearly from MaxOpacity for the first historical path to this on the final historical path.\u003Cbr\u003E0.25 means the oldest historical opacity is at 25%, 0.5 means the oldest is at 50%.",
           "isNested": false
         },
@@ -1193,7 +982,7 @@
           "name": "MaxOpacity",
           "jsonPropertyName": "MaxOpacity",
           "type": "float",
-          "defaultValue": 0.8,
+          "defaultValue": 1,
           "description": "Opacity for the historical path.\u003Cbr\u003EOpacity scales linearly from this for the first historical path to MinOpacity on the final historical path.\u003Cbr\u003E0.5 means the newest historical path\u0027s opacity is at 50%, 0.75 means the newest is at 75%.",
           "isNested": false
         },
@@ -1209,7 +998,7 @@
           "name": "MeanderIterations",
           "jsonPropertyName": "MeanderIterations",
           "type": "int",
-          "defaultValue": 12,
+          "defaultValue": 16,
           "description": "Number of iterative passes for the progressive meandering on braided streams.\u003Cbr\u003EEach iteration applies small displacements that accumulate over the iterations into larger meanders.\u003Cbr\u003ENot enough iterations and the streams will be basic, more closely resembling their base bezier curves.\u003Cbr\u003EAfter a certain point the iterations becomes meaningless. You can meander the streams forever.",
           "isNested": false
         },
@@ -1217,7 +1006,7 @@
           "name": "SinuosityAtSource",
           "jsonPropertyName": "SinuosityAtSource",
           "type": "float",
-          "defaultValue": 1.145,
+          "defaultValue": 1.4,
           "description": "Sinuosity at the braided stream source.\u003Cbr\u003ESinuosity scales the amplitude of the meandering sine-based curves per iteration.\u003Cbr\u003EThe sinuosity lerps from the source to the anchor based on the distance along the stream.\u003Cbr\u003ESuper volatile value, completely changes how meandering works with even a tiny change.",
           "isNested": false
         },
@@ -1225,16 +1014,8 @@
           "name": "SinuosityAtAnchor",
           "jsonPropertyName": "SinuosityAtAnchor",
           "type": "float",
-          "defaultValue": 1.145,
+          "defaultValue": 1.4,
           "description": "Sinuosity at the anchor point for braided streams.\u003Cbr\u003EStreams longer than anchor length continue extrapolating linearly.\u003Cbr\u003E1.0 means a straight line. 1.5\u002B gives massive meandering.\u003Cbr\u003EThe sinuosity lerps from the source to the anchor based on the distance along the stream.\u003Cbr\u003ESuper volatile value, completely changes how meandering works with even a tiny change.",
-          "isNested": false
-        },
-        {
-          "name": "SinuosityScalingPower",
-          "jsonPropertyName": "SinuosityScalingPower",
-          "type": "float",
-          "defaultValue": 1,
-          "description": "Power curve applied to the sinuosity as it goes from source to anchor for braided streams.",
           "isNested": false
         },
         {
@@ -1254,14 +1035,6 @@
           "isNested": false
         },
         {
-          "name": "WavelengthScalingPower",
-          "jsonPropertyName": "WavelengthScalingPower",
-          "type": "float",
-          "defaultValue": 1,
-          "description": "Power curve applied to the wavelength scaling from source to anchor for braided streams.",
-          "isNested": false
-        },
-        {
           "name": "UseConstantBeltWidthRatio",
           "jsonPropertyName": "UseConstantBeltWidthRatio",
           "type": "bool",
@@ -1273,16 +1046,8 @@
           "name": "BeltWidthToStreamWidthRatio",
           "jsonPropertyName": "BeltWidthToStreamWidthRatio",
           "type": "float",
-          "defaultValue": 1.5,
+          "defaultValue": 6,
           "description": "Target ratio of meander belt width to stream bed width for braided streams. Only used when UseConstantBeltWidthRatio is true.\u003Cbr\u003E0.35 means the meander belt width is 35% of stream width. Higher that than means you get wider meander belts relative to the stream width.\u003Cbr\u003EThe wavelength multipliers are automatically calculated from this ratio and the sinuosity values.",
-          "isNested": false
-        },
-        {
-          "name": "CurvatureDisplacementMultipiler",
-          "jsonPropertyName": "CurvatureDisplacementMultipiler",
-          "type": "float",
-          "defaultValue": 1,
-          "description": "Higher means stronger growth of the existing bends for braided streams.",
           "isNested": false
         },
         {
@@ -1298,32 +1063,16 @@
               "name": "SourceDistanceAtAnchor",
               "jsonPropertyName": "SourceDistanceAtAnchor",
               "type": "float",
-              "defaultValue": 250,
+              "defaultValue": 50,
               "description": "Distance from the braided stream source (in blocks) when the stream is at the anchor\u0027s stream length, over which to fade meandering back to the original path.\u003Cbr\u003EThis distance scales with stream length: short streams have proportionally shorter fade distances, long streams have proportionally longer fade distances.\u003Cbr\u003EBasically, its how big the fadeout of meandering is near the stream source.",
-              "isNested": false
-            },
-            {
-              "name": "SourceExponent",
-              "jsonPropertyName": "SourceExponent",
-              "type": "float",
-              "defaultValue": 0.8,
-              "description": "Power curve exponent for source fade transition on braided streams.\u003Cbr\u003EThis controls how quickly the meandering fades into the straight path near the stream source.",
               "isNested": false
             },
             {
               "name": "MouthDistanceAtAnchor",
               "jsonPropertyName": "MouthDistanceAtAnchor",
               "type": "float",
-              "defaultValue": 250,
+              "defaultValue": 300,
               "description": "Distance from the braided stream drain/connection (in blocks) when the stream is at the anchor\u0027s stream length, over which to fade meandering back to a straight connection.\u003Cbr\u003EThis distance scales with stream length: short streams have proportionally shorter fade distances, long streams have proportionally longer fade distances.\u003Cbr\u003EBasically, its how big the fadeout of meandering is near the stream mouth.",
-              "isNested": false
-            },
-            {
-              "name": "MouthExponent",
-              "jsonPropertyName": "MouthExponent",
-              "type": "float",
-              "defaultValue": 0.8,
-              "description": "Power curve exponent for mouth fade transition on braided streams.\u003Cbr\u003EThis controls how quickly the meandering fades into the straight connection to the drain/main stream.",
               "isNested": false
             }
           ]
@@ -1341,7 +1090,7 @@
               "name": "WindowRadius",
               "jsonPropertyName": "WindowRadius",
               "type": "int",
-              "defaultValue": 16,
+              "defaultValue": 8,
               "description": "Number of neighboring points on each side to include in smoothing window for braided streams.\u003Cbr\u003EControls spatial extent of smoothing effect. Applied per iteration.\u003Cbr\u003E1 gives a 3-point window (current \u002B 2 neighbors), 2 gives a 5-point window, 3 gives a 7-point window.",
               "isNested": false
             },
@@ -1349,7 +1098,7 @@
               "name": "Strength",
               "jsonPropertyName": "Strength",
               "type": "float",
-              "defaultValue": 3,
+              "defaultValue": 1,
               "description": "Controls the intensity of the smoothing within the smoothing window for braided streams.\u003Cbr\u003E0.0 to 1.0 is no smoothing to full smoothing, and 1.0\u002B is even more smoothing.\u003Cbr\u003EAdjust together with WindowRadius.",
               "isNested": false
             }
@@ -1360,7 +1109,7 @@
           "jsonPropertyName": "SteepTerrainStraightening",
           "type": "nested",
           "defaultValue": null,
-          "description": "Configuration for straightening braided streams around steep terrain.",
+          "description": "Configuration for straightening streams around steep terrain to prevent meandering into cliffs and hills, and to keep mountain streams clean.",
           "isNested": true,
           "nestedClassName": "SteepTerrainStraighteningConfig",
           "nestedProperties": [
@@ -1369,31 +1118,23 @@
               "jsonPropertyName": "BlendStrength",
               "type": "float",
               "defaultValue": 0.5,
-              "description": "Maximum strength of blending the meandered path back to original bezier curve path in and around steep terrain for braided streams.\u003Cbr\u003E0 means no blending (full meandering everywhere). 1 means a hard switch to the bezier curve when the path gets to an area with the max steepness.",
+              "description": "Maximum strength of blending the meandered path back to original bezier curve path in and around steep terrain.\u003Cbr\u003E0 means no blending (full meandering everywhere). 1 means a hard switch to the bezier curve when the path gets to an area with the max steepness.\u003Cbr\u003EThis prevents streams from meandering the path into nearby cliffs and hills, and keeps the stream path clean on mountains.\u003Cbr\u003EUse with HeightThreshold to define the relationship between terrain height and blend strength",
               "isNested": false
             },
             {
               "name": "HeightThreshold",
               "jsonPropertyName": "HeightThreshold",
               "type": "float",
-              "defaultValue": 30,
-              "description": "Height difference (in blocks) at which steep terrain blending reaches full strength for braided streams.",
-              "isNested": false
-            },
-            {
-              "name": "BlendPower",
-              "jsonPropertyName": "BlendPower",
-              "type": "float",
-              "defaultValue": 2,
-              "description": "Power curve exponent for steep terrain blending on braided streams.",
+              "defaultValue": 60,
+              "description": "Height difference (in blocks) at which steep terrain blending reaches full strength.\u003Cbr\u003EThe blending lerps from 0 blending at 0 height difference to the full blending strength (BlendStrength) at this configured threshold.\u003Cbr\u003EThis prevents streams from meandering the path into nearby cliffs and hills, and keeps the stream path clean on mountains.\u003Cbr\u003EUse with BlendStrength to define the relationship between terrain height and blend strength",
               "isNested": false
             },
             {
               "name": "SearchRadius",
               "jsonPropertyName": "SearchRadius",
               "type": "int",
-              "defaultValue": 1,
-              "description": "Manhattan distance radius (in chunks) for searching neighboring terrain when calculating max height difference for braided streams.\u003Cbr\u003E0 means only use the current chunk. 1 means include immediate neighbors. 2\u002B means a larger search area.",
+              "defaultValue": 0,
+              "description": "Manhattan distance radius (in chunks) for searching neighboring terrain when calculating max height difference.\u003Cbr\u003E0 means only use the current chunk. 1 means include immediate neighbors. 2\u002B means a larger search area.\u003Cbr\u003EA larger radius catches steep/rough terrain that is further from the stream path.Increase it if you find streams meandering into rough terrain, otherwise leave at 0",
               "isNested": false
             }
           ]
@@ -1411,7 +1152,7 @@
               "name": "ProximityThreshold",
               "jsonPropertyName": "ProximityThreshold",
               "type": "float",
-              "defaultValue": 1.75,
+              "defaultValue": 0.75,
               "description": "Minimum distance between meander curves as fraction of the local meander\u0027s amplitude for braided streams.",
               "isNested": false
             },
@@ -1432,14 +1173,74 @@
               "isNested": false
             }
           ]
+        },
+        {
+          "name": "DrainMovement",
+          "jsonPropertyName": "DrainMovement",
+          "type": "nested",
+          "defaultValue": null,
+          "description": "Configs for the moving the stream mouths/drain points along the coast.",
+          "isNested": true,
+          "nestedClassName": "DrainMovementConfig",
+          "nestedProperties": [
+            {
+              "name": "DrainMigrateRadius",
+              "jsonPropertyName": "DrainMigrateRadius",
+              "type": "float",
+              "defaultValue": 128,
+              "description": "The stream mouths can migrate this amount of blocks away from it\u0027s original drain mouths, if their stream mouths can migrate.\u003Cbr\u003EAt time of writing, this is for meandering and braided streams.",
+              "isNested": false
+            },
+            {
+              "name": "SlowdownInnerMigrateRadiusFraction",
+              "jsonPropertyName": "SlowdownInnerMigrateRadiusFraction",
+              "type": "float",
+              "defaultValue": 0.5,
+              "description": "This is the fraction of DrainMigrateRadius where a strream mouth can migrate before getting slowed down.",
+              "isNested": false
+            },
+            {
+              "name": "DistributaryFanStrength",
+              "jsonPropertyName": "DistributaryFanStrength",
+              "type": "float",
+              "defaultValue": 0.1,
+              "description": "Strength of the fanning out effect on the original braided stream mouth positions.",
+              "isNested": false
+            },
+            {
+              "name": "DistributaryFanDistance",
+              "jsonPropertyName": "DistributaryFanDistance",
+              "type": "float",
+              "defaultValue": 150,
+              "description": "Distributary fanning effect starts this distance away from the original stream mouth.",
+              "isNested": false
+            },
+            {
+              "name": "DistributarySpreadAtAnchor",
+              "jsonPropertyName": "DistributarySpreadAtAnchor",
+              "type": "float",
+              "defaultValue": 45,
+              "description": "How many blocks each braided distributary channel\u0027s mouth is fanned left\u0026right along the coastline at the anchor length.",
+              "isNested": false
+            },
+            {
+              "name": "MouthStraighteningStrength",
+              "jsonPropertyName": "MouthStraighteningStrength",
+              "type": "float",
+              "defaultValue": 0.1,
+              "description": "To prevent the stream meandering around/on the stream mouth we straighten it up between the stream mouth and (the scaled) mouthFadeAtAnchor.\u003Cbr\u003E0.0 is no straightening 1.0 is full strength straightening.",
+              "isNested": false
+            }
+          ]
         }
       ]
     },
     {
-      "fileName": "StreamDimensionsConfig.json",
-      "className": "StreamDimensionsConfig",
-      "displayName": "Stream Dimensions",
-      "description": "Settings for the shapes and sizes of the streams.",
+      "fileName": "Straight/StreamDimensionsConfig.json",
+      "className": "StraightStreamDimensionsConfig",
+      "baseClassName": "StreamDimensionsConfig",
+      "displayName": "Straight Stream Dimensions",
+      "description": "Settings for the shapes and sizes for this type of streams.",
       "properties": [
         {
           "name": "StreamBedWidthAtAnchor",
@@ -1469,7 +1270,7 @@
           "name": "MinimumBedWidth",
           "jsonPropertyName": "MinimumBedWidth",
           "type": "float",
-          "defaultValue": 1,
+          "defaultValue": 1.5,
           "description": "Minimum width in blocks of the main stream bed at its source (narrowest point).\u003Cbr\u003EStreams taper from StreamBedWidth at the mouth to this value at the source.",
           "isNested": false
         },
@@ -1485,7 +1286,7 @@
           "name": "BedLowestDepth",
           "jsonPropertyName": "BedLowestDepth",
           "type": "float",
-          "defaultValue": 9,
+          "defaultValue": 7,
           "description": "Depth in blocks of the stream bed from the surrounding terrain level. Controls the maximum depth of the deepest part of streams (before the bend pooling).\u003Cbr\u003EShould be greater than BankLowestDepth for natural appearance.\u003Cbr\u003EIf you make this too deep it will make the streams like ravines, cutting into the terrain.\u003Cbr\u003EIf you make this too shallow you\u0027ll see a lot more broken streams on mountains/hills, with water spilling off the sides.\u003Cbr\u003EOne day I might figure out a better solution to the spilling water, so you can make this shallow without worries.",
           "isNested": false
         },
@@ -1494,7 +1295,7 @@
           "jsonPropertyName": "BankLowestDepth",
           "type": "float",
           "defaultValue": 1,
-          "description": "Depth in blocks of stream banks relative to surrounding terrain.\u003Cbr\u003ECreates a transition zone between stream bed and valley.\u003Cbr\u003EShould be between BedLowestDepth and ValleyLowestDepth.",
+          "description": "Depth in blocks of stream banks relative to surrounding terrain.\u003Cbr\u003ECreates a transition area between stream bed and valley.\u003Cbr\u003EShould be between BedLowestDepth and ValleyLowestDepth.",
           "isNested": false
         },
         {
@@ -1502,75 +1303,163 @@
           "jsonPropertyName": "ValleyLowestDepth",
           "type": "float",
           "defaultValue": -2,
-          "description": "Depth of the stream valley edges relative to surrounding terrain.\u003Cbr\u003EControls how gradually streams blend into surrounding terrain.\u003Cbr\u003EShould be less than BankLowestDepth for natural appearance. Will need to be adjusted depending on world height.\u003Cbr\u003ECan also be negative, lifting up the area around streams to make the stream banks more defined.",
+          "description": "Depth of the stream valley edges relative to surrounding terrain.\u003Cbr\u003EShould be less than BankLowestDepth for natural appearance.\u003Cbr\u003ECan also be negative, lifting up the area around streams to make the stream banks more defined.",
           "isNested": false
-        },
-        {
-          "name": "Tributary",
-          "jsonPropertyName": "Tributary",
-          "type": "nested",
-          "defaultValue": null,
-          "description": "Configuration for tributary stream dimensions including width, bank, and valley settings.",
-          "isNested": true,
-          "nestedClassName": "TributaryDimensionsConfig",
-          "nestedProperties": [
-            {
-              "name": "BedWidthAtAnchor",
-              "jsonPropertyName": "BedWidthAtAnchor",
-              "type": "float",
-              "defaultValue": 13.2,
-              "description": "Width in blocks of the deepest part of tributary streams at the scaling anchor length.\u003Cbr\u003EMust be less than BankWidthAtAnchor.",
-              "isNested": false
-            },
-            {
-              "name": "BankWidthAtAnchor",
-              "jsonPropertyName": "BankWidthAtAnchor",
-              "type": "float",
-              "defaultValue": 33,
-              "description": "Total width in blocks of tributary stream banks at the scaling anchor length.\u003Cbr\u003EMust be less than ValleyWidthAtAnchor and greater than BedWidthAtAnchor.",
-              "isNested": false
-            },
-            {
-              "name": "ValleyWidthAtAnchor",
-              "jsonPropertyName": "ValleyWidthAtAnchor",
-              "type": "float",
-              "defaultValue": 82.5,
-              "description": "Total width in blocks of the terrain guided towards a valley shape for tributary streams at the scaling anchor length.\u003Cbr\u003EMust be greater than BankWidthAtAnchor.",
-              "isNested": false
-            },
-            {
-              "name": "MinimumBedWidth",
-              "jsonPropertyName": "MinimumBedWidth",
-              "type": "float",
-              "defaultValue": 0.66,
-              "description": "Minimum width in blocks of the tributary bed at its source.\u003Cbr\u003ETributaries taper from BedWidthAtAnchor at the connection to this value at the source.",
-              "isNested": false
-            },
-            {
-              "name": "MinimumBankWidth",
-              "jsonPropertyName": "MinimumBankWidth",
-              "type": "float",
-              "defaultValue": 2.64,
-              "description": "Minimum width in blocks of the tributary banks at the source.\u003Cbr\u003EBanks taper from BankWidthAtAnchor at the connection to this value at the source.",
-              "isNested": false
-            },
-            {
-              "name": "BedAlphaMultiplier",
-              "jsonPropertyName": "BedAlphaMultiplier",
-              "type": "float",
-              "defaultValue": 0.75,
-              "description": "Opacity multiplier for tributary bed layer.\u003Cbr\u003EReduces the depth of tributaries compared to main streams.",
-              "isNested": false
-            }
-          ]
         }
       ]
     },
     {
-      "fileName": "StreamWaterConfig.json",
-      "className": "StreamWaterConfig",
-      "displayName": "Stream Water",
-      "description": "Settings for where water is placed and how entitys are pushed downstream by the stream water.",
+      "fileName": "Meandering/StreamDimensionsConfig.json",
+      "className": "MeanderingStreamDimensionsConfig",
+      "baseClassName": "StreamDimensionsConfig",
+      "displayName": "Meandering Stream Dimensions",
+      "description": "Settings for the shapes and sizes for this type of streams.",
+      "properties": [
+        {
+          "name": "StreamBedWidthAtAnchor",
+          "jsonPropertyName": "StreamBedWidthAtAnchor",
+          "type": "float",
+          "defaultValue": 15,
+          "description": "Width in blocks of the deepest part of the main stream at the position of the anchor.\u003Cbr\u003EMust be less than StreamBankWidthAtAnchor.",
+          "isNested": false
+        },
+        {
+          "name": "StreamBankWidthAtAnchor",
+          "jsonPropertyName": "StreamBankWidthAtAnchor",
+          "type": "float",
+          "defaultValue": 50,
+          "description": "Total width in blocks of the main stream banks at position of the anchor.\u003Cbr\u003EMust be less than ValleyWidthAtAnchor and greater than BedWidthAtAnchor.",
+          "isNested": false
+        },
+        {
+          "name": "StreamValleyWidthAtAnchor",
+          "jsonPropertyName": "StreamValleyWidthAtAnchor",
+          "type": "float",
+          "defaultValue": 65,
+          "description": "Total width in blocks of the terrain guided towards a valley shape for main streams at the scaling anchor length.\u003Cbr\u003EMust be greater than BankWidthAtAnchor.\u003Cbr\u003EThe valley used to be way more important than it is now, currently its almost ignored.",
+          "isNested": false
+        },
+        {
+          "name": "MinimumBedWidth",
+          "jsonPropertyName": "MinimumBedWidth",
+          "type": "float",
+          "defaultValue": 1.5,
+          "description": "Minimum width in blocks of the main stream bed at its source (narrowest point).\u003Cbr\u003EStreams taper from StreamBedWidth at the mouth to this value at the source.",
+          "isNested": false
+        },
+        {
+          "name": "MinimumBankWidth",
+          "jsonPropertyName": "MinimumBankWidth",
+          "type": "float",
+          "defaultValue": 4,
+          "description": "Minimum width in blocks of the main stream banks at the source (narrowest point).\u003Cbr\u003EBanks taper from StreamBankWidth at the mouth to this value at the source.",
+          "isNested": false
+        },
+        {
+          "name": "BedLowestDepth",
+          "jsonPropertyName": "BedLowestDepth",
+          "type": "float",
+          "defaultValue": 7,
+          "description": "Depth in blocks of the stream bed from the surrounding terrain level. Controls the maximum depth of the deepest part of streams (before the bend pooling).\u003Cbr\u003EShould be greater than BankLowestDepth for natural appearance.\u003Cbr\u003EIf you make this too deep it will make the streams like ravines, cutting into the terrain.\u003Cbr\u003EIf you make this too shallow you\u0027ll see a lot more broken streams on mountains/hills, with water spilling off the sides.\u003Cbr\u003EOne day I might figure out a better solution to the spilling water, so you can make this shallow without worries.",
+          "isNested": false
+        },
+        {
+          "name": "BankLowestDepth",
+          "jsonPropertyName": "BankLowestDepth",
+          "type": "float",
+          "defaultValue": 1,
+          "description": "Depth in blocks of stream banks relative to surrounding terrain.\u003Cbr\u003ECreates a transition area between stream bed and valley.\u003Cbr\u003EShould be between BedLowestDepth and ValleyLowestDepth.",
+          "isNested": false
+        },
+        {
+          "name": "ValleyLowestDepth",
+          "jsonPropertyName": "ValleyLowestDepth",
+          "type": "float",
+          "defaultValue": -2,
+          "description": "Depth of the stream valley edges relative to surrounding terrain.\u003Cbr\u003EShould be less than BankLowestDepth for natural appearance.\u003Cbr\u003ECan also be negative, lifting up the area around streams to make the stream banks more defined.",
+          "isNested": false
+        }
+      ]
+    },
+    {
+      "fileName": "Braided/StreamDimensionsConfig.json",
+      "className": "BraidedStreamDimensionsConfig",
+      "baseClassName": "StreamDimensionsConfig",
+      "displayName": "Braided Stream Dimensions",
+      "description": "Settings for the shapes and sizes for this type of streams.",
+      "properties": [
+        {
+          "name": "StreamBedWidthAtAnchor",
+          "jsonPropertyName": "StreamBedWidthAtAnchor",
+          "type": "float",
+          "defaultValue": 8,
+          "description": "Width in blocks of the deepest part of the main stream at the position of the anchor.\u003Cbr\u003EMust be less than StreamBankWidthAtAnchor.",
+          "isNested": false
+        },
+        {
+          "name": "StreamBankWidthAtAnchor",
+          "jsonPropertyName": "StreamBankWidthAtAnchor",
+          "type": "float",
+          "defaultValue": 18,
+          "description": "Total width in blocks of the main stream banks at position of the anchor.\u003Cbr\u003EMust be less than ValleyWidthAtAnchor and greater than BedWidthAtAnchor.",
+          "isNested": false
+        },
+        {
+          "name": "StreamValleyWidthAtAnchor",
+          "jsonPropertyName": "StreamValleyWidthAtAnchor",
+          "type": "float",
+          "defaultValue": 65,
+          "description": "Total width in blocks of the terrain guided towards a valley shape for main streams at the scaling anchor length.\u003Cbr\u003EMust be greater than BankWidthAtAnchor.\u003Cbr\u003EThe valley used to be way more important than it is now, currently its almost ignored.",
+          "isNested": false
+        },
+        {
+          "name": "MinimumBedWidth",
+          "jsonPropertyName": "MinimumBedWidth",
+          "type": "float",
+          "defaultValue": 1.85,
+          "description": "Minimum width in blocks of the main stream bed at its source (narrowest point).\u003Cbr\u003EStreams taper from StreamBedWidth at the mouth to this value at the source.",
+          "isNested": false
+        },
+        {
+          "name": "MinimumBankWidth",
+          "jsonPropertyName": "MinimumBankWidth",
+          "type": "float",
+          "defaultValue": 4,
+          "description": "Minimum width in blocks of the main stream banks at the source (narrowest point).\u003Cbr\u003EBanks taper from StreamBankWidth at the mouth to this value at the source.",
+          "isNested": false
+        },
+        {
+          "name": "BedLowestDepth",
+          "jsonPropertyName": "BedLowestDepth",
+          "type": "float",
+          "defaultValue": 8,
+          "description": "Depth in blocks of the stream bed from the surrounding terrain level. Controls the maximum depth of the deepest part of streams (before the bend pooling).\u003Cbr\u003EShould be greater than BankLowestDepth for natural appearance.\u003Cbr\u003EIf you make this too deep it will make the streams like ravines, cutting into the terrain.\u003Cbr\u003EIf you make this too shallow you\u0027ll see a lot more broken streams on mountains/hills, with water spilling off the sides.\u003Cbr\u003EOne day I might figure out a better solution to the spilling water, so you can make this shallow without worries.",
+          "isNested": false
+        },
+        {
+          "name": "BankLowestDepth",
+          "jsonPropertyName": "BankLowestDepth",
+          "type": "float",
+          "defaultValue": 1,
+          "description": "Depth in blocks of stream banks relative to surrounding terrain.\u003Cbr\u003ECreates a transition area between stream bed and valley.\u003Cbr\u003EShould be between BedLowestDepth and ValleyLowestDepth.",
+          "isNested": false
+        },
+        {
+          "name": "ValleyLowestDepth",
+          "jsonPropertyName": "ValleyLowestDepth",
+          "type": "float",
+          "defaultValue": -2,
+          "description": "Depth of the stream valley edges relative to surrounding terrain.\u003Cbr\u003EShould be less than BankLowestDepth for natural appearance.\u003Cbr\u003ECan also be negative, lifting up the area around streams to make the stream banks more defined.",
+          "isNested": false
+        }
+      ]
+    },
+    {
+      "fileName": "Straight/StreamWaterConfig.json",
+      "className": "StraightStreamWaterConfig",
+      "baseClassName": "StreamWaterConfig",
+      "displayName": "Straight Stream Water",
+      "description": "Settings for this type of stream for where water is placed and how entitys are pushed downstream by the stream water.",
       "properties": [
         {
           "name": "WaterBelowStreamBed",
@@ -1581,26 +1470,18 @@
           "isNested": false
         },
         {
-          "name": "WaterAboveStreamBedMaximum",
-          "jsonPropertyName": "WaterAboveStreamBedMaximum",
-          "type": "int",
-          "defaultValue": 30,
-          "description": "Maximum water height above the stream bed.\u003Cbr\u003EIts still capped by the heights of the stream banks, so you can\u0027t make it go super high.\u003Cbr\u003EYou can lower this to make the river water shallower, or higher if you make the rivers larger and deeper to make the water still reach the banks.\u003Cbr\u003EDepreciated by BankToWaterSurfaceGap, use that instead.",
-          "isNested": false
-        },
-        {
           "name": "BankToWaterSurfaceGap",
           "jsonPropertyName": "BankToWaterSurfaceGap",
           "type": "int",
           "defaultValue": 1,
-          "description": "Block gap between the stream bank height and the stream water surface.\u003Cbr\u003EThis is pretty much what WaterAboveStreamBedMaximum used to be before I added bank sampling, so use this instead now.",
+          "description": "Block gap between the stream bank height and the stream water surface.\u003Cbr\u003EThis is pretty much what WaterAboveStreamBedMaximum used to be before I added bank sampling.",
           "isNested": false
         },
         {
           "name": "PercentOfStreamBedAsCoreArea",
           "jsonPropertyName": "PercentOfStreamBedAsCoreArea",
           "type": "float",
-          "defaultValue": 0.9,
+          "defaultValue": 0.925,
           "description": "Threshold for determining the core streambed area (a stream bed opacity above this is considered core).\u003Cbr\u003EUsed to placing water blocks 1 high on the streambed center/core area even when there isn\u0027t enough bank height,\u003Cbr\u003Eensuring the water stream is continuous, even if the banks are busted up.\u003Cbr\u003EIf you make this too low there will be water on the banks of streams.\u003Cbr\u003EIf you make this too high streams with broken banks will also have a broken stream.",
           "isNested": false
         },
@@ -1609,7 +1490,7 @@
           "jsonPropertyName": "StreamBedWaterPlacementThreshold",
           "type": "float",
           "defaultValue": 0.3,
-          "description": "Minimum stream bed opacity value required for water block placement.\u003Cbr\u003EWith lower resolution stream maps where blockColumnsPerPixel is over 1, the bilerp blur\u003Cbr\u003Ecauses bed opacity to blur onto bank areas. This threshold filters out those blurred values.\u003Cbr\u003EThis threshold should be \u003E= StreamBedBlockPlacementThreshold.",
+          "description": "Minimum stream bed opacity value required for water block placement.\u003Cbr\u003EWith lower resolution stream maps where blockColumnsPerPixel is over 1, the bilerp blur\u003Cbr\u003Ecauses bed opacity to blur onto bank areas. This threshold filters out that blur.\u003Cbr\u003EThis should be higher than StreamBedBlockPlacementThreshold.",
           "isNested": false
         },
         {
@@ -1629,39 +1510,290 @@
           "isNested": false
         },
         {
-          "name": "UpstreamBankHeightSampling",
-          "jsonPropertyName": "UpstreamBankHeightSampling",
+          "name": "RapidsAtStreamEdges",
+          "jsonPropertyName": "RapidsAtStreamEdges",
           "type": "nested",
           "defaultValue": null,
-          "description": "Configuration for sampling the upstream bank heights.\u003Cbr\u003EThese sampled heights constrain the water height from exceeding the banks.\u003Cbr\u003EThe water placement samples upstream from each position to help prevent water from being higher than water upstream.\u003Cbr\u003EUses the median of multiple upstream bank heights to prevent sudden water level changes from terrain bumps on individual bank points.",
+          "description": "Configuration for rapids placement near steep stream terrain like waterfalls.",
           "isNested": true,
-          "nestedClassName": "UpstreamBankHeightSamplingConfig",
+          "nestedClassName": "RapidsAtStreamEdgesConfig",
           "nestedProperties": [
             {
               "name": "Enabled",
               "jsonPropertyName": "Enabled",
               "type": "bool",
               "defaultValue": true,
-              "description": "Enable upstream bank height sampling for smoother water levels.\u003Cbr\u003EWhen enabled, water height is constrained by the median of multiple upstream bank heights, instead of just the immediate left/right bank points.\u003Cbr\u003EThis prevents sudden water level jumps when a single bank point has a terrain bump.",
+              "description": "Turns the spreading normal freshwater blocks near steep terrain(waterfalls) into rapid water blocks.",
               "isNested": false
             },
             {
-              "name": "SampleIntervalBlocks",
-              "jsonPropertyName": "SampleIntervalBlocks",
+              "name": "SteepnessThreshold",
+              "jsonPropertyName": "SteepnessThreshold",
               "type": "float",
-              "defaultValue": 3,
-              "description": "Distance in blocks between each upstream bank height sample.\u003Cbr\u003ESmaller values mean more samples but since sampling is expensive for performance, it could slow down generation if set too low.",
+              "defaultValue": 0.3,
+              "description": "The minimum steepness of the terrain around spreading stream water for it to be turned into rapids.\u003Cbr\u003ELower means more rapids, higher means less rapids.",
               "isNested": false
             },
             {
-              "name": "TotalDistanceBlocks",
-              "jsonPropertyName": "TotalDistanceBlocks",
-              "type": "float",
-              "defaultValue": 500,
-              "description": "When deciding water height for a position on the stream based on the banks, this is the total distance in blocks to sample upstream from that position.\u003Cbr\u003EThe number of samples is the TotalDistanceBlocks divided by the SampleIntervalBlocks.",
+              "name": "SteepnessSearchRadius",
+              "jsonPropertyName": "SteepnessSearchRadius",
+              "type": "int",
+              "defaultValue": 10,
+              "description": "The search radius around a stream area for checking the terrain steepness when deciding to turn spreading stream water into rapids.\u003Cbr\u003ELower means rapids are placed closer to the steepest parts of a stream(the drop in a waterfall). Higher means rapids fill up a larger area within and around steep stream areas.",
               "isNested": false
             }
           ]
+        },
+        {
+          "name": "StreamWaterPush",
+          "jsonPropertyName": "StreamWaterPush",
+          "type": "nested",
+          "defaultValue": null,
+          "description": "Configuration for stream water push mechanics that push entities (like players and animals) downstream.",
+          "isNested": true,
+          "nestedClassName": "StreamWaterPushConfig",
+          "nestedProperties": [
+            {
+              "name": "PushMagnitude",
+              "jsonPropertyName": "PushMagnitude",
+              "type": "float",
+              "defaultValue": 0.0008,
+              "description": "The base magnitude of the push vector applied to entities in stream water.\u003Cbr\u003EThis is scaled by the stream\u0027s width factor (wider streams push harder).",
+              "isNested": false
+            },
+            {
+              "name": "DownstreamSampleDistance",
+              "jsonPropertyName": "DownstreamSampleDistance",
+              "type": "int",
+              "defaultValue": 5,
+              "description": "Number of curve points away downstream to use as the vector target sample when calculating flow direction.\u003Cbr\u003EThe push vector aims from the upstream sample towards the downstream sample.\u003Cbr\u003EThis direction causes entities to drift more towards the outer bank of bends instead of towards the center of the stream (when this is at 0).",
+              "isNested": false
+            },
+            {
+              "name": "UpstreamSampleDistance",
+              "jsonPropertyName": "UpstreamSampleDistance",
+              "type": "int",
+              "defaultValue": 12,
+              "description": "Number of curve points away upstream to use as the vector origin sample for push direction calculation.\u003Cbr\u003EThe push vector aims from the upstream sample towards the downstream sample.\u003Cbr\u003EThis direction causes entities to drift more towards the outer bank of bends instead of towards the center of the stream (when this is at 0).",
+              "isNested": false
+            },
+            {
+              "name": "BankSpeedFactor",
+              "jsonPropertyName": "BankSpeedFactor",
+              "type": "float",
+              "defaultValue": 0,
+              "description": "How fast the push is near the stream banks compared to the center (0.0 to 1.0). Should be lower than PushMagnitude, the shallow water on the banks shouldn\u0027t push you downstream as much as the center of a flowing stream.",
+              "isNested": false
+            },
+            {
+              "name": "Enabled",
+              "jsonPropertyName": "Enabled",
+              "type": "bool",
+              "defaultValue": true,
+              "description": null,
+              "isNested": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "fileName": "Meandering/StreamWaterConfig.json",
+      "className": "MeanderingStreamWaterConfig",
+      "baseClassName": "StreamWaterConfig",
+      "displayName": "Meandering Stream Water",
+      "description": "Settings for this type of stream for where water is placed and how entitys are pushed downstream by the stream water.",
+      "properties": [
+        {
+          "name": "WaterBelowStreamBed",
+          "jsonPropertyName": "WaterBelowStreamBed",
+          "type": "int",
+          "defaultValue": 6,
+          "description": "The distance in blocks below the center of the stream bed, that air blocks turns to water.\u003Cbr\u003EThis fills in water when there are indents around the center of the stream. For example if one side of the river is deeper than the center.\u003Cbr\u003EIf the center of the river is on a bump and to the side the bed is deeper, this needs to be large enough to make up the difference.",
+          "isNested": false
+        },
+        {
+          "name": "BankToWaterSurfaceGap",
+          "jsonPropertyName": "BankToWaterSurfaceGap",
+          "type": "int",
+          "defaultValue": 1,
+          "description": "Block gap between the stream bank height and the stream water surface.\u003Cbr\u003EThis is pretty much what WaterAboveStreamBedMaximum used to be before I added bank sampling.",
+          "isNested": false
+        },
+        {
+          "name": "PercentOfStreamBedAsCoreArea",
+          "jsonPropertyName": "PercentOfStreamBedAsCoreArea",
+          "type": "float",
+          "defaultValue": 0.925,
+          "description": "Threshold for determining the core streambed area (a stream bed opacity above this is considered core).\u003Cbr\u003EUsed to placing water blocks 1 high on the streambed center/core area even when there isn\u0027t enough bank height,\u003Cbr\u003Eensuring the water stream is continuous, even if the banks are busted up.\u003Cbr\u003EIf you make this too low there will be water on the banks of streams.\u003Cbr\u003EIf you make this too high streams with broken banks will also have a broken stream.",
+          "isNested": false
+        },
+        {
+          "name": "StreamBedWaterPlacementThreshold",
+          "jsonPropertyName": "StreamBedWaterPlacementThreshold",
+          "type": "float",
+          "defaultValue": 0.3,
+          "description": "Minimum stream bed opacity value required for water block placement.\u003Cbr\u003EWith lower resolution stream maps where blockColumnsPerPixel is over 1, the bilerp blur\u003Cbr\u003Ecauses bed opacity to blur onto bank areas. This threshold filters out that blur.\u003Cbr\u003EThis should be higher than StreamBedBlockPlacementThreshold.",
+          "isNested": false
+        },
+        {
+          "name": "StreamBedBlockPlacementThreshold",
+          "jsonPropertyName": "StreamBedBlockPlacementThreshold",
+          "type": "float",
+          "defaultValue": 0.2,
+          "description": "Minimum bedAlpha value required for streambed block placement (gravel, sand, clay, etc).\u003Cbr\u003ESet this lower than StreamBedWaterPlacementThreshold to place streambed blocks on\u003Cbr\u003Eold/weak streambeds (like braided stream channels) without flooding them with water.\u003Cbr\u003EThis allows dry gravel bars and exposed streambed areas in braided stream systems.",
+          "isNested": false
+        },
+        {
+          "name": "WaterForwardOffset",
+          "jsonPropertyName": "WaterForwardOffset",
+          "type": "int",
+          "defaultValue": 3,
+          "description": "Forward offset for water placement along the stream curve.\u003Cbr\u003EPushes water placement forward by this many curve points to help create the impression that the water is flowing downstream.\u003Cbr\u003EHigher values make water bulge out foward more, lower values keep it closer to the streambed.",
+          "isNested": false
+        },
+        {
+          "name": "RapidsAtStreamEdges",
+          "jsonPropertyName": "RapidsAtStreamEdges",
+          "type": "nested",
+          "defaultValue": null,
+          "description": "Configuration for rapids placement near steep stream terrain like waterfalls.",
+          "isNested": true,
+          "nestedClassName": "RapidsAtStreamEdgesConfig",
+          "nestedProperties": [
+            {
+              "name": "Enabled",
+              "jsonPropertyName": "Enabled",
+              "type": "bool",
+              "defaultValue": true,
+              "description": "Turns the spreading normal freshwater blocks near steep terrain(waterfalls) into rapid water blocks.",
+              "isNested": false
+            },
+            {
+              "name": "SteepnessThreshold",
+              "jsonPropertyName": "SteepnessThreshold",
+              "type": "float",
+              "defaultValue": 0.3,
+              "description": "The minimum steepness of the terrain around spreading stream water for it to be turned into rapids.\u003Cbr\u003ELower means more rapids, higher means less rapids.",
+              "isNested": false
+            },
+            {
+              "name": "SteepnessSearchRadius",
+              "jsonPropertyName": "SteepnessSearchRadius",
+              "type": "int",
+              "defaultValue": 10,
+              "description": "The search radius around a stream area for checking the terrain steepness when deciding to turn spreading stream water into rapids.\u003Cbr\u003ELower means rapids are placed closer to the steepest parts of a stream(the drop in a waterfall). Higher means rapids fill up a larger area within and around steep stream areas.",
+              "isNested": false
+            }
+          ]
+        },
+        {
+          "name": "StreamWaterPush",
+          "jsonPropertyName": "StreamWaterPush",
+          "type": "nested",
+          "defaultValue": null,
+          "description": "Configuration for stream water push mechanics that push entities (like players and animals) downstream.",
+          "isNested": true,
+          "nestedClassName": "StreamWaterPushConfig",
+          "nestedProperties": [
+            {
+              "name": "PushMagnitude",
+              "jsonPropertyName": "PushMagnitude",
+              "type": "float",
+              "defaultValue": 0.0008,
+              "description": "The base magnitude of the push vector applied to entities in stream water.\u003Cbr\u003EThis is scaled by the stream\u0027s width factor (wider streams push harder).",
+              "isNested": false
+            },
+            {
+              "name": "DownstreamSampleDistance",
+              "jsonPropertyName": "DownstreamSampleDistance",
+              "type": "int",
+              "defaultValue": 5,
+              "description": "Number of curve points away downstream to use as the vector target sample when calculating flow direction.\u003Cbr\u003EThe push vector aims from the upstream sample towards the downstream sample.\u003Cbr\u003EThis direction causes entities to drift more towards the outer bank of bends instead of towards the center of the stream (when this is at 0).",
+              "isNested": false
+            },
+            {
+              "name": "UpstreamSampleDistance",
+              "jsonPropertyName": "UpstreamSampleDistance",
+              "type": "int",
+              "defaultValue": 12,
+              "description": "Number of curve points away upstream to use as the vector origin sample for push direction calculation.\u003Cbr\u003EThe push vector aims from the upstream sample towards the downstream sample.\u003Cbr\u003EThis direction causes entities to drift more towards the outer bank of bends instead of towards the center of the stream (when this is at 0).",
+              "isNested": false
+            },
+            {
+              "name": "BankSpeedFactor",
+              "jsonPropertyName": "BankSpeedFactor",
+              "type": "float",
+              "defaultValue": 0,
+              "description": "How fast the push is near the stream banks compared to the center (0.0 to 1.0). Should be lower than PushMagnitude, the shallow water on the banks shouldn\u0027t push you downstream as much as the center of a flowing stream.",
+              "isNested": false
+            },
+            {
+              "name": "Enabled",
+              "jsonPropertyName": "Enabled",
+              "type": "bool",
+              "defaultValue": true,
+              "description": null,
+              "isNested": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "fileName": "Braided/StreamWaterConfig.json",
+      "className": "BraidedStreamWaterConfig",
+      "baseClassName": "StreamWaterConfig",
+      "displayName": "Braided Stream Water",
+      "description": "Settings for this type of stream for where water is placed and how entitys are pushed downstream by the stream water.",
+      "properties": [
+        {
+          "name": "WaterBelowStreamBed",
+          "jsonPropertyName": "WaterBelowStreamBed",
+          "type": "int",
+          "defaultValue": 6,
+          "description": "The distance in blocks below the center of the stream bed, that air blocks turns to water.\u003Cbr\u003EThis fills in water when there are indents around the center of the stream. For example if one side of the river is deeper than the center.\u003Cbr\u003EIf the center of the river is on a bump and to the side the bed is deeper, this needs to be large enough to make up the difference.",
+          "isNested": false
+        },
+        {
+          "name": "BankToWaterSurfaceGap",
+          "jsonPropertyName": "BankToWaterSurfaceGap",
+          "type": "int",
+          "defaultValue": 1,
+          "description": "Block gap between the stream bank height and the stream water surface.\u003Cbr\u003EThis is pretty much what WaterAboveStreamBedMaximum used to be before I added bank sampling.",
+          "isNested": false
+        },
+        {
+          "name": "PercentOfStreamBedAsCoreArea",
+          "jsonPropertyName": "PercentOfStreamBedAsCoreArea",
+          "type": "float",
+          "defaultValue": 0.925,
+          "description": "Threshold for determining the core streambed area (a stream bed opacity above this is considered core).\u003Cbr\u003EUsed to placing water blocks 1 high on the streambed center/core area even when there isn\u0027t enough bank height,\u003Cbr\u003Eensuring the water stream is continuous, even if the banks are busted up.\u003Cbr\u003EIf you make this too low there will be water on the banks of streams.\u003Cbr\u003EIf you make this too high streams with broken banks will also have a broken stream.",
+          "isNested": false
+        },
+        {
+          "name": "StreamBedWaterPlacementThreshold",
+          "jsonPropertyName": "StreamBedWaterPlacementThreshold",
+          "type": "float",
+          "defaultValue": 0.3,
+          "description": "Minimum stream bed opacity value required for water block placement.\u003Cbr\u003EWith lower resolution stream maps where blockColumnsPerPixel is over 1, the bilerp blur\u003Cbr\u003Ecauses bed opacity to blur onto bank areas. This threshold filters out that blur.\u003Cbr\u003EThis should be higher than StreamBedBlockPlacementThreshold.",
+          "isNested": false
+        },
+        {
+          "name": "StreamBedBlockPlacementThreshold",
+          "jsonPropertyName": "StreamBedBlockPlacementThreshold",
+          "type": "float",
+          "defaultValue": 0.2,
+          "description": "Minimum bedAlpha value required for streambed block placement (gravel, sand, clay, etc).\u003Cbr\u003ESet this lower than StreamBedWaterPlacementThreshold to place streambed blocks on\u003Cbr\u003Eold/weak streambeds (like braided stream channels) without flooding them with water.\u003Cbr\u003EThis allows dry gravel bars and exposed streambed areas in braided stream systems.",
+          "isNested": false
+        },
+        {
+          "name": "WaterForwardOffset",
+          "jsonPropertyName": "WaterForwardOffset",
+          "type": "int",
+          "defaultValue": 3,
+          "description": "Forward offset for water placement along the stream curve.\u003Cbr\u003EPushes water placement forward by this many curve points to help create the impression that the water is flowing downstream.\u003Cbr\u003EHigher values make water bulge out foward more, lower values keep it closer to the streambed.",
+          "isNested": false
         },
         {
           "name": "RapidsAtStreamEdges",
@@ -1758,20 +1890,20 @@
       "description": "Various less complicated features.",
       "properties": [
         {
-          "name": "CoastalTerrain",
-          "jsonPropertyName": "CoastalTerrain",
+          "name": "CoastalErosionSlope",
+          "jsonPropertyName": "CoastalErosionSlope",
           "type": "nested",
           "defaultValue": null,
-          "description": "Configuration for terrain modification effects that create coastal lowlands and inland highlands.",
+          "description": "The Coastal Erosion slope creates a large scale slope from the coasts at sealevel to higher elevation inland areas. Makes the world tilted and curvy, helps streams go long with smooth elevation changes, and aims them inland away from the ocean.",
           "isNested": true,
-          "nestedClassName": "CoastalTerrainConfig",
+          "nestedClassName": "CoastalErosionSlopeConfig",
           "nestedProperties": [
             {
               "name": "Enabled",
               "jsonPropertyName": "Enabled",
               "type": "bool",
               "defaultValue": false,
-              "description": "When enabled, creates a gradual terrain height transition from low coastal areas to higher inland areas.\u003Cbr\u003EThis makes terrain near oceans lower, creating realistic coastal lowlands. Then it makes inland terrain higher, creating highlands and a subtle, realistic slope from coast to inland.",
+              "description": "When enabled, the Coastal Erosion slope creates a large scale gradual terrain height transition from low coastal areas to higher inland areas.\u003Cbr\u003EThis makes terrain near oceans lower, creating realistic coastal lowlands. Then it makes inland terrain higher, creating highlands and a subtle, realistic slope from the coastline towards inland.",
               "isNested": false
             },
             {
@@ -1786,7 +1918,7 @@
               "name": "InlandMaxRaising",
               "jsonPropertyName": "InlandMaxRaising",
               "type": "float",
-              "defaultValue": 34,
+              "defaultValue": 4,
               "description": "Maximum height lift in blocks for inland terrain, outside of the coastal map\u0027s influence (far inland).\u003Cbr\u003EThe lift fades to zero near and past coasts where the coastal map has full influence.",
               "isNested": false
             },
@@ -1819,7 +1951,7 @@
               "jsonPropertyName": "SandThreshold",
               "type": "float",
               "defaultValue": 0.15,
-              "description": "The opacity percentile (0-1) above which underwater areas get sand instead of muddy gravel.\u003Cbr\u003EThis affects areas lowered below sea level by the coastal effect.",
+              "description": "The opacity percentile (0-1) above which underwater areas get sand instead of muddy gravel.",
               "isNested": false
             }
           ]
@@ -1829,7 +1961,7 @@
           "jsonPropertyName": "Groundwater",
           "type": "nested",
           "defaultValue": null,
-          "description": "Configuration for the groundwater system that creates seeping walls and water spawning when digging in areas with high water flow.",
+          "description": "The groundwater system creates seeping walls and water spawning when digging in areas with high water flow.",
           "isNested": true,
           "nestedClassName": "GroundwaterConfig",
           "nestedProperties": [
@@ -1904,7 +2036,7 @@
               "name": "ChunkGenBaseSpawnChance",
               "jsonPropertyName": "ChunkGenBaseSpawnChance",
               "type": "float",
-              "defaultValue": 0.00125,
+              "defaultValue": 0.00075,
               "description": "Base fish spawn chance per stream water block during world generation.",
               "isNested": false
             },
@@ -3480,7 +3612,7 @@
           "jsonPropertyName": "MaxVolume",
           "type": "float",
           "defaultValue": 0.2,
-          "description": "Volume of stream sounds at or inside DistanceFalloffStart.\u003Cbr\u003E0.0 is no sound, 1.0 is full volume.",
+          "description": "Base volume of stream sounds when nearby. Distance falloff is handled by the game\u0027s positional audio.\u003Cbr\u003E0.0 is no sound, 1.0 is full volume.",
           "isNested": false
         },
         {
@@ -3490,37 +3622,45 @@
           "defaultValue": true,
           "description": "Whether to use the custom stream sound file instead of the vanilla creek sound",
           "isNested": false
-        },
+        }
+      ]
+    },
+    {
+      "fileName": "RiversCompatibilityConfig.json",
+      "className": "RiversCompatibilityConfig",
+      "displayName": "Rivers Compatibility",
+      "description": "Settings for Watersheds compatability with the Rivers mod\u0027s rivers.",
+      "properties": [
         {
-          "name": "LowPassFilterBase",
-          "jsonPropertyName": "LowPassFilterBase",
+          "name": "RiverConnectionDownstreamOffset",
+          "jsonPropertyName": "RiverConnectionDownstreamOffset",
           "type": "float",
-          "defaultValue": 1.2,
-          "description": "Base low-pass filter amount applied to stream sounds at the source.\u003Cbr\u003ELower LowPassFilterBase reduces high frequencies at the source.",
+          "defaultValue": 15,
+          "description": "How many blocks downstream along the river centerline the stream mouth connection point is moved.\u003Cbr\u003EThis makes the connections streams that join rivers run downstream the river, not against it.",
           "isNested": false
         },
         {
-          "name": "LowPassFilterMinimum",
-          "jsonPropertyName": "LowPassFilterMinimum",
+          "name": "RiverDrainFadeOffset",
+          "jsonPropertyName": "RiverDrainFadeOffset",
           "type": "float",
-          "defaultValue": 0.35,
-          "description": "Minimum low-pass filter value after indoor dampening.",
+          "defaultValue": 30,
+          "description": "How far away the fade circle is from the stream mouth at river drain connections.\u003Cbr\u003EUses a gradient circle to fade out the stream mouth into the river.",
           "isNested": false
         },
         {
-          "name": "DistanceFalloffStart",
-          "jsonPropertyName": "DistanceFalloffStart",
+          "name": "RiverDrainFadeRadius",
+          "jsonPropertyName": "RiverDrainFadeRadius",
           "type": "float",
-          "defaultValue": 4,
-          "description": "Volume starts falling off at this distance (in blocks) from the stream water",
+          "defaultValue": 40,
+          "description": "How big the fade circle is at river drain connections.\u003Cbr\u003EUses a gradient circle to fade out the stream mouth into the river.\u003E",
           "isNested": false
         },
         {
-          "name": "DistanceFalloffEnd",
-          "jsonPropertyName": "DistanceFalloffEnd",
+          "name": "MinRiverWidthForStreamDrain",
+          "jsonPropertyName": "MinRiverWidthForStreamDrain",
           "type": "float",
-          "defaultValue": 12,
-          "description": "Volume is 0 at this distance (in blocks) away from the stream, and gets louder as you get closer.",
+          "defaultValue": 10,
+          "description": "Minimum river channel width in blocks at the connection point for a stream to drain into the river.\u003Cbr\u003EThis makes sure big\u002Bwide streams dont flow into thin river sources.",
           "isNested": false
         }
       ]
@@ -3532,106 +3672,98 @@
       "displayName": "Performance \u0026 Stream Length",
       "options": [
         {
-          "name": "0-simpleFastShort",
-          "displayName": "0 - Simple fast \u0026 short streams",
+          "name": "0-streamsDisabled",
+          "displayName": "Streams disabled",
           "overrides": {
-            "BraidedConfig": {
-              "EnabledChance": 0,
-              "SteepTerrainStraightening": {
-                "SearchRadius": 1
-              }
-            },
-            "MeanderingConfig": {
-              "EnabledChance": 0,
-              "SteepTerrainStraightening": {
-                "SearchRadius": 1
-              }
-            },
+            "StreamGenerationConfig": {
+              "MaxStreamLength": 0
+            }
+          }
+        },
+        {
+          "name": "1-simpleFastShort",
+          "displayName": "Default - Simple fast \u0026 short streams",
+          "overrides": {
+            "StreamGenerationConfig": {
+              "MaxStreamLength": 9
+            }
+          }
+        },
+        {
+          "name": "2-mediumStreamsMidCPU",
+          "displayName": "Medium streams, mid CPU \u0026 mid RAM",
+          "overrides": {
             "StreamGenerationConfig": {
               "MaxStreamLength": 12
             }
           }
         },
         {
-          "name": "1-mediumStreamsMidCPU",
-          "displayName": "1 - Medium streams, mid CPU \u0026 mid RAM",
+          "name": "3-longStreamsGoodCPU",
+          "displayName": "Long streams, good CPU \u0026 mid RAM",
           "overrides": {
-            "BraidedConfig": {
-              "EnabledChance": 40,
-              "SteepTerrainStraightening": {
-                "SearchRadius": 1
-              }
-            },
-            "MeanderingConfig": {
-              "EnabledChance": 60,
-              "SteepTerrainStraightening": {
-                "SearchRadius": 1
-              }
-            },
             "StreamGenerationConfig": {
               "MaxStreamLength": 15
             }
           }
         },
         {
-          "name": "2-longStreamsGoodCPU",
-          "displayName": "2 - Long streams, good CPU \u0026 mid RAM",
+          "name": "4-veryLongStreamsGoodCPU",
+          "displayName": "Very long streams, good CPU \u0026 mid RAM, wait for generation",
           "overrides": {
-            "BraidedConfig": {
-              "EnabledChance": 40,
-              "SteepTerrainStraightening": {
-                "SearchRadius": 2
-              }
-            },
-            "MeanderingConfig": {
-              "EnabledChance": 60,
-              "SteepTerrainStraightening": {
-                "SearchRadius": 2
-              }
-            },
             "StreamGenerationConfig": {
               "MaxStreamLength": 18
-            }
-          }
-        },
-        {
-          "name": "3-veryLongStreamsGoodCPU",
-          "displayName": "3 - Very long streams, good CPU \u0026 mid RAM, wait for generation",
-          "overrides": {
-            "BraidedConfig": {
-              "EnabledChance": 40,
-              "SteepTerrainStraightening": {
-                "SearchRadius": 2
-              }
-            },
-            "MeanderingConfig": {
-              "EnabledChance": 60,
-              "SteepTerrainStraightening": {
-                "SearchRadius": 2
-              }
-            },
-            "StreamGenerationConfig": {
-              "MaxStreamLength": 21
             }
           }
         }
       ]
     },
     {
-      "name": "1-CoastalErosion",
-      "displayName": "Coastal Erosion",
+      "name": "1-MassiveStreams",
+      "displayName": "Massive Streams",
+      "options": [
+        {
+          "name": "0-enabled",
+          "displayName": "Enabled - Long streams but slows down generation",
+          "overrides": {
+            "StreamGenerationConfig": {
+              "MassiveStreamsEnabled": true
+            }
+          }
+        },
+        {
+          "name": "1-disabled",
+          "displayName": "Disabled - Default",
+          "overrides": {
+            "StreamGenerationConfig": {
+              "MassiveStreamsEnabled": false
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2-CoastalErosionSlope",
+      "displayName": "Coastal Erosion Slope",
       "options": [
         {
           "name": "0-noCoastalErosion",
-          "displayName": "No coastal erosion",
-          "overrides": {}
+          "displayName": "Default - No Coastal Erosion slope",
+          "overrides": {
+            "ExtraFeaturesConfig": {
+              "CoastalErosionSlope": {
+                "Enabled": true,
+                "InlandMaxRaising": 0
+              }
+            }
+          }
         },
         {
           "name": "1-256WorldHeight",
-          "displayName": "256 world height coastal erosion",
+          "displayName": "Small coastal erosion slope recommended for 256 worldheight",
           "overrides": {
             "ExtraFeaturesConfig": {
-              "CoastalTerrain": {
+              "CoastalErosionSlope": {
                 "Enabled": true,
                 "InlandMaxRaising": 15
               }
@@ -3640,10 +3772,10 @@
         },
         {
           "name": "2-384WorldHeight",
-          "displayName": "384 world height coastal erosion",
+          "displayName": "Medium coastal erosion slope recommended for 384 worldheight",
           "overrides": {
             "ExtraFeaturesConfig": {
-              "CoastalTerrain": {
+              "CoastalErosionSlope": {
                 "Enabled": true,
                 "InlandMaxRaising": 22.5
               }
@@ -3652,10 +3784,10 @@
         },
         {
           "name": "3-512WorldHeight",
-          "displayName": "512 world height coastal erosion",
+          "displayName": "High coastal erosion slope recommended for 512 worldheight",
           "overrides": {
             "ExtraFeaturesConfig": {
-              "CoastalTerrain": {
+              "CoastalErosionSlope": {
                 "Enabled": true,
                 "InlandMaxRaising": 30
               }
@@ -3665,19 +3797,23 @@
       ]
     },
     {
-      "name": "2-TerrainErosion",
-      "displayName": "Terrain Erosion",
+      "name": "3-RidgeGullyErosionFilter",
+      "displayName": "Ridge Gully Erosion Filter",
       "options": [
         {
           "name": "0-disabled",
           "displayName": "Disabled",
-          "overrides": {}
+          "overrides": {
+            "RidgeGullyErosionFilterConfig": {
+              "Enabled": false
+            }
+          }
         },
         {
           "name": "1-enabled",
-          "displayName": "Enabled",
+          "displayName": "Enabled - Default",
           "overrides": {
-            "TerrainErosionConfig": {
+            "RidgeGullyErosionFilterConfig": {
               "Enabled": true
             }
           }
@@ -3685,13 +3821,19 @@
       ]
     },
     {
-      "name": "3-Groundwater",
+      "name": "4-Groundwater",
       "displayName": "Groundwater",
       "options": [
         {
           "name": "0-disabled",
-          "displayName": "Disabled",
-          "overrides": {}
+          "displayName": "Disabled - Default",
+          "overrides": {
+            "ExtraFeaturesConfig": {
+              "Groundwater": {
+                "Enabled": false
+              }
+            }
+          }
         },
         {
           "name": "1-enabled",
@@ -3707,7 +3849,7 @@
       ]
     },
     {
-      "name": "4-Waterwheels",
+      "name": "5-Waterwheels",
       "displayName": "Waterwheels",
       "options": [
         {
@@ -3723,6 +3865,41 @@
               "StreamWaterPowersWheelsLikeRapids": true
             }
           }
+        }
+      ]
+    },
+    {
+      "name": "6-StreamTypes",
+      "displayName": "Stream Types",
+      "options": [
+        {
+          "name": "0-straightOnly",
+          "displayName": "Clean but less interesting - Just straight streams",
+          "overrides": {
+            "BraidedConfig": {
+              "EnabledChance": 0
+            },
+            "MeanderingConfig": {
+              "EnabledChance": 0
+            }
+          }
+        },
+        {
+          "name": "1-straightMeandering",
+          "displayName": "A balance - Straight and Meandering Streams",
+          "overrides": {
+            "BraidedConfig": {
+              "EnabledChance": 0
+            },
+            "MeanderingConfig": {
+              "EnabledChance": 50
+            }
+          }
+        },
+        {
+          "name": "2-default",
+          "displayName": "Default - Crazy and interesting - Straight, Meandering, \u0026 Braided",
+          "overrides": {}
         }
       ]
     }
