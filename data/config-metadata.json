@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-08T22:42:22.9308443Z",
+  "generatedAt": "2026-08-09T15:10:35.1991289Z",
   "configs": [
     {
       "fileName": "TerrainAnalysisConfig.json",
@@ -3772,7 +3772,7 @@
         },
         {
           "name": "2-384WorldHeight",
-          "displayName": "Medium coastal erosion slope recommended for 384 worldheight",
+          "displayName": "Medium coastal erosion slope recommended for 384 worldheight and Terra Prety",
           "overrides": {
             "ExtraFeaturesConfig": {
               "CoastalErosionSlope": {
